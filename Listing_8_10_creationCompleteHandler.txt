@@ -1,0 +1,11 @@
+    private function creationCompleteHandler():void {
+        _service = AirTubeService.getInstance();
+        _service.key = "AhWz9YtBmWM";
+        _videoWindow = new VideoWindow();
+        _htmlWindow = new HTMLWindow();
+        _instance = this;
+        registerClassAlias("com.manning.airtube.data.AirTubeVideo", AirTubeVideo);
+        if(!NativeApplication.nativeApplication.isSetAsDefaultApplication("atv")) {
+            NativeApplication.nativeApplication.setAsDefaultApplication("atv");
+        }
+    }

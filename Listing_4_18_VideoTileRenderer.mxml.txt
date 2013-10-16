@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" width="200" height="100" 
+    verticalScrollPolicy="off" horizontalScrollPolicy="off" 
+    mouseDown="mouseDownHandler();">                                         
+    <mx:Script>
+        <![CDATA[
+            
+            private function mouseDownHandler():void {
+                var file:File = File.applicationStorageDirectory.resolvePath("temporary/" + data.video.title + ".atv");
+                var writer:FileStream = new FileStream();
+                writer.open(file, FileMode.WRITE);
+                writer.writeUTF(data.video.id);   
+                var clipboard:Clipboard = new Clipboard();
+                clipboard.setData(ClipboardFormats.FILE_LIST_FORMAT, [file]);
+                var indicator:BitmapData = new BitmapData(width, height);
+                indicator.draw(this);
+                var point:Point = new Point(-mouseX, -mouseY);
+                NativeDragManager.doDrag(this, clipboard, indicator, point); 
+            }
+            
+        ]]>
+    </mx:Script>
+    <mx:Image source="{data.video.thumbnailUrl}" />
+    <mx:VBox>
+        <mx:Label text="{data.video.title}" />
+    </mx:VBox>
+</mx:HBox>

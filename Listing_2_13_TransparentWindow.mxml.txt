@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Window xmlns:mx="http://www.adobe.com/2006/mxml" showFlexChrome="false" systemChrome="none" type="lightweight" transparent="true" width="200" height="200" creationComplete="creationCompleteHandler();">
+    <mx:Script>
+        <![CDATA[
+            
+            private function creationCompleteHandler():void {
+
+                var shape:Shape = new Shape();
+                shape.graphics.lineStyle(0, 0, 0);
+                shape.graphics.beginFill(0xFFFFFF, 1);
+                shape.graphics.drawCircle(100, 100, 100);
+                shape.graphics.endFill();
+                
+                rawChildren.addChild(shape);
+
+            }
+            
+        ]]>
+    </mx:Script>
+</mx:Window>

@@ -1,0 +1,61 @@
+package com.manning.playlistmaker.data {
+
+    import flash.events.Event;
+    import flash.events.EventDispatcher;
+    import flash.filesystem.File;
+
+    public class ApplicationData extends EventDispatcher {
+        
+        static private var _instance:ApplicationData;                                
+        
+        private var _mp3s:Playlist;                                                  
+        private var _playlist:Playlist;                                              
+        private var _savedPlaylists:Array;                                           
+        
+        [Bindable(event="mp3sChanged")]
+        public function get mp3s():Playlist {
+            return _mp3s;
+        }
+        
+        [Bindable(event="playlistChanged")]
+        public function set playlist(value:Playlist):void {
+            _playlist = value;
+            dispatchEvent(new Event("playlistChanged"));
+        }
+        
+        public function get playlist():Playlist {
+            return _playlist;
+        }
+        
+        [Bindable(event="savedPlaylistsChanged")]
+        public function set savedPlaylists(value:Array):void {
+            _savedPlaylists = value;
+            dispatchEvent(new Event("savedPlaylistsChanged"));
+        }
+        
+        public function get savedPlaylists():Array {
+            return _savedPlaylists;
+        }
+        
+        public function ApplicationData() {
+            _mp3s = new Playlist();
+            _playlist = new Playlist();
+            _savedPlaylists = new Array();
+        }
+        
+        static public function getInstance():ApplicationData {                        
+            if(_instance == null) {
+                _instance = new ApplicationData();
+            }
+            return _instance;
+        }
+        
+        public function addPlaylist(playlist:Playlist):void {                         
+            if(_savedPlaylists.indexOf(playlist) == -1) {
+                _savedPlaylists.push(playlist);
+                dispatchEvent(new Event("savedPlaylistsChanged"));
+            }
+        }
+                
+    }
+}

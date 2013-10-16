@@ -1,0 +1,19 @@
+package {
+    
+    import flash.display.MovieClip;
+    
+    public class Example extends MovieClip {
+        
+        public function Example() {
+            
+            var window:ExampleWindow = new ExampleWindow();
+            window.width = 200;
+            window.height = 200;
+
+            window.activate();
+            
+        }
+        
+    }
+    
+}

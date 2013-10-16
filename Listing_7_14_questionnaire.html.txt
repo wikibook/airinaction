@@ -1,0 +1,46 @@
+<html>
+    <script>
+
+        function getSurveyResponses() {
+            var response;
+            var options = document.questionnaire.skyColor;
+            for(var i = 0; i <  options.length; i++) {
+                if(options[i].checked) {
+                    response = options[i].value;
+                }
+            }
+            var response1 = {question: document.getElementById("question1").innerHTML, answer: response};
+
+            options = document.questionnaire.skySize;
+            for(i = 0; i <  options.length; i++) {
+                if(options[i].checked) {
+                    response = options[i].value;
+                }
+            }
+            var response2 = {question: document.getElementById("question2").innerHTML, answer: response};
+
+            return [response1, response2];
+        }
+    </script>
+    <body>
+        <h1>Quesionnaire</h1>
+        <form name="questionnaire">
+            Please complete the following survey.
+            <h2 id="question1">1. What is the color of the sky?</h2>
+            <input type="radio" name="skyColor" value="grey">grey
+            <input type="radio" name="skyColor" value="blue">blue
+            <input type="radio" name="skyColor" value="no color">no color
+            <input type="radio" name="skyColor" value="brown">brown
+
+            <h2 id="question2">2. What is the size of the sky?</h2>
+            <input type="radio" name="skySize" value="big">big
+            <input type="radio" name="skySize" value="really big">really big
+            <input type="radio" name="skySize" value="not very big">not very big
+            <input type="radio" name="skySize" value="smaller than a cow">smaller than a cow
+    
+            <h2>Click the button to finish
+            <button id="submitButton">Submit Answers</button>
+
+        </form>
+    </body>
+</html>

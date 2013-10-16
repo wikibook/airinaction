@@ -1,0 +1,31 @@
+package {
+    
+    import flash.display.MovieClip;
+    import flash.display.NativeWindow;
+    import flash.desktop.NativeApplication;
+    import flash.utils.Timer;
+    import flash.events.TimerEvent;
+    import flash.desktop.NotificationType;
+    
+    public class Example extends MovieClip {
+        
+        private var _timer:Timer;
+        
+        public function Example() {
+            
+            _timer = new Timer(5000);
+            _timer.addEventListener(TimerEvent.TIMER, timerHandler);
+            _timer.start();
+
+        }        
+                
+        private function timerHandler(event:TimerEvent):void {
+            var mainWindow:NativeWindow = NativeApplication.nativeApplication.openedWindows[0] as NativeWindow;
+            if(!mainWindow.active) {
+                mainWindow.notifyUser(NotificationType.INFORMATIONAL);
+            }
+        }
+                
+    }
+    
+}

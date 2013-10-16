@@ -1,0 +1,9 @@
+<application xmlns="http://ns.adobe.com/air/application/1.0">
+  <id>com.manning.airinaction.UpdatableApplication</id>
+  <filename>UpdatableApplication</filename>
+  <name>UpdatableApplication</name>
+  <version>1.0</version>
+  <initialWindow>
+    <content>UpdatableApplication.swf</content>
+  </initialWindow>
+</application>

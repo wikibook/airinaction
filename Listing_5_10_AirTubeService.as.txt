@@ -1,0 +1,173 @@
+package com.manning.airtube.services {
+    
+    import com.adobe.webapis.youtube.YouTubeService;
+    import com.adobe.webapis.youtube.events.YouTubeServiceEvent;
+    import com.manning.airtube.data.AirTubeVideo;
+    import com.manning.airtube.data.ApplicationData;
+    import com.manning.airtube.utilities.YouTubeFlvUrlRetriever;
+    import com.adobe.webapis.youtube.Video;
+    
+    import flash.events.Event;
+    import flash.events.ProgressEvent;
+    import flash.filesystem.File;
+    import flash.filesystem.FileMode;
+    import flash.filesystem.FileStream;
+    import flash.net.URLRequest;
+    import flash.net.URLStream;
+    import flash.utils.ByteArray;
+    import flash.events.SQLEvent;
+    import flash.data.SQLConnection;
+    import flash.data.SQLMode;
+    import flash.data.SQLResult;
+    import flash.data.SQLStatement;
+
+    public class AirTubeService {
+        
+        static private var _instance:AirTubeService;
+        
+        private var _proxied:YouTubeService;
+        private var _flvFile:File;
+        private var _imageFile:File;
+        private var _downloadingVideo:AirTubeVideo;
+        private var _connection:SQLConnection;
+        
+        public function set key(value:String):void {
+            _proxied.apiKey = value;
+        }
+        
+        public function AirTubeService() {
+            _proxied = new YouTubeService();
+            _proxied.addEventListener(YouTubeServiceEvent.VIDEOS_LIST_BY_TAG, getVideosByTagsResultHandler);
+            var databaseFile:File = File.applicationStorageDirectory.resolvePath("AirTube.db");                    
+            _connection = new SQLConnection();                                     
+            _connection.addEventListener(SQLEvent.OPEN, databaseOpenHandler);      
+            _connection.openAsync(databaseFile, SQLMode.CREATE);                   
+        }
+        
+        static public function getInstance():AirTubeService {
+            if(_instance == null) {
+                _instance = new AirTubeService();
+            }
+            return _instance;
+        }
+        
+        private function databaseOpenHandler(event:Event):void {
+            var sql:SQLStatement = new SQLStatement();
+            sql.sqlConnection = _connection;
+            sql.text = "CREATE TABLE IF NOT EXISTS videos(" +                         
+                "id TEXT PRIMARY KEY, title TEXT, " +                                 
+                "url TEXT, tags TEXT)";                                               
+            sql.execute();
+        }
+
+        public function getVideosByTags(tags:String):void {
+            if(_proxied.apiKey.length == 0) {
+                throw Error("YouTube API key not set");
+            }
+            if(ApplicationData.getInstance().online) {                                 
+                _proxied.videos.listByTag(tags);
+            }
+            else {
+                var sql:SQLStatement = new SQLStatement();
+                sql.addEventListener(SQLEvent.RESULT, getOfflineVideosResultHandler);
+                sql.sqlConnection = _connection;
+                var text:String = "SELECT * FROM videos WHERE 1 = 0";                   
+                var tagsItems:Array = tags.split(" ");                                  
+                for(var i:Number = 0; i < tagsItems.length; i++) {                      
+                    text += " OR tags LIKE ?";                                          
+                    sql.parameters[i] = "%" + tagsItems[i] + "%";                       
+                }                                                                       
+                sql.text = text;
+                sql.itemClass = Video;                                                  
+                sql.execute();
+            }
+        }
+
+        private function getVideosByTagsResultHandler(event:YouTubeServiceEvent):void {
+            var videos:Array = event.data.videoList as Array;
+            for(var i:Number = 0; i < videos.length; i++) {
+                videos[i] = new AirTubeVideo(videos[i]);
+            }
+            ApplicationData.getInstance().videos = videos;
+        }
+
+        private function getOfflineVideosResultHandler(event:SQLEvent):void {
+            var statement:SQLStatement = event.target as SQLStatement;
+            var result:SQLResult = statement.getResult();
+            var videos:Array = new Array();
+            var video:AirTubeVideo;
+            if(result != null && result.data != null) {
+                for(var i:Number = 0; i < result.data.length; i++) {
+                    video = new AirTubeVideo(result.data[i]);                           
+                    video.offline = true;
+                    video.flvUrl = File.applicationStorageDirectory.resolvePath("videos/" + video.video.id + ".flv").nativePath;                                                #6
+                    video.video.thumbnailUrl = File.applicationStorageDirectory.resolvePath("thumbnails/" + video.video.id + ".jpg").nativePath;                                                
+                    videos.push(video);
+                }
+            }
+            ApplicationData.getInstance().videos = videos;
+        }
+        
+        public function configureVideoForPlayback(video:AirTubeVideo):void {
+            ApplicationData.getInstance().currentVideo = video;
+            if(video.flvUrl == null) {
+                new YouTubeFlvUrlRetriever().getUrl(video);
+            }
+        }
+        
+        public function saveToOffline(video:AirTubeVideo):void {                           
+            _downloadingVideo = video;                                                     
+   
+            _flvFile = File.applicationStorageDirectory.resolvePath("videos/" +            
+                            video.video.id + ".flv");                                      
+            var videoLoader:URLStream = new URLStream();
+            videoLoader.load(new URLRequest(video.flvUrl));                                
+            videoLoader.addEventListener(Event.COMPLETE, videoDownloadCompleteHandler);
+            videoLoader.addEventListener(ProgressEvent.PROGRESS, videoDownloadProgressHandler);
+            
+            _imageFile = File.applicationStorageDirectory.resolvePath("thumbnails/" +      
+                              video.video.id + ".jpg");                                    
+            var imageLoader:URLStream = new URLStream();
+            imageLoader.load(new URLRequest(video.video.thumbnailUrl));                    
+            imageLoader.addEventListener(ProgressEvent.PROGRESS, imageDownloadProgressHandler);
+        }
+        
+        private function videoDownloadProgressHandler(event:ProgressEvent):void {
+            var loader:URLStream = event.target as URLStream;
+            var bytes:ByteArray = new ByteArray();
+            loader.readBytes(bytes);                                                       
+            var writer:FileStream = new FileStream();
+            writer.open(_flvFile, FileMode.APPEND);                                        
+            writer.writeBytes(bytes);                                                      
+            writer.close();
+            var ratio:Number = event.bytesLoaded / event.bytesTotal;
+            ApplicationData.getInstance().downloadProgress = ratio;                       
+                        
+        }
+        
+        private function videoDownloadCompleteHandler(event:Event):void {
+            _downloadingVideo.offline = true;                                             
+            ApplicationData.getInstance().downloadProgress = 0;                           
+            var sql:SQLStatement = new SQLStatement();
+            sql.sqlConnection = _connection;
+            sql.text = "INSERT INTO videos(" +                                          
+                "title, id, url, tags) VALUES(" +                                       
+                "@title, @id, @url, @tags)";                                            
+            sql.parameters["@title"] = _downloadingVideo.video.title;                   
+            sql.parameters["@id"] = _downloadingVideo.video.id;                         
+            sql.parameters["@url"] = _downloadingVideo.video.url;                       
+            sql.parameters["@tags"] = _downloadingVideo.video.tags;                     
+            sql.execute();
+        }
+
+        private function imageDownloadProgressHandler(event:ProgressEvent):void {
+            var loader:URLStream = event.target as URLStream;
+            var bytes:ByteArray = new ByteArray();
+            loader.readBytes(bytes);                                                     
+            var writer:FileStream = new FileStream();
+            writer.open(_imageFile, FileMode.APPEND);                                     
+            writer.writeBytes(bytes);                                                     
+            writer.close();
+        }
+    }
+}

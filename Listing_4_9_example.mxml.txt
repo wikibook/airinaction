@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
+    <mx:Script>
+        <![CDATA[
+            import com.manning.airinaction.Address;
+            
+            private function copy():void {                                    
+                var address:Address = new Address();                          
+                address.address1 = address1.text;                             
+                address.address2 = address2.text;                             
+                address.city = city.text;                                     
+                address.province = province.text;                             
+                address.postalCode = postalCode.text;                         
+                var clipboard:Clipboard = Clipboard.generalClipboard;         
+                clipboard.clear();                                            
+                clipboard.setData("address", address);                        
+            }
+            
+        ]]>
+    </mx:Script>
+    <mx:Form>
+        <mx:FormItem label="Address 1">
+            <mx:TextInput id="address1" />
+        </mx:FormItem>
+        <mx:FormItem label="Address 2">
+            <mx:TextInput id="address2" />
+        </mx:FormItem>
+        <mx:FormItem label="City">
+            <mx:TextInput id="city" />
+        </mx:FormItem>
+        <mx:FormItem label="State/Province">
+            <mx:TextInput id="province" />
+        </mx:FormItem>
+        <mx:FormItem label="Postal Code">
+            <mx:TextInput id="postalCode" />
+        </mx:FormItem>
+        <mx:FormItem>
+            <mx:Button label="Copy" click="copy();" />
+        </mx:FormItem>
+    </mx:Form>
+</mx:WindowedApplication>

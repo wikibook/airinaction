@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" borderStyle="solid" width="100%" 
+    toolTip="{'description: ' + data.description                                          
+             + '\nmust by done by: ' + data.mustBeDoneBy}">                               
+    <mx:HBox>
+        <mx:Label text="{data.name}" width="200" />
+        <mx:Label text="priority {data.priority}" />
+        <mx:Button label="Delete" click="dispatchEvent(new Event('delete'));" />
+        <mx:Button label="Edit" click="dispatchEvent(new Event('edit'));" />
+    </mx:HBox>
+</mx:VBox>

@@ -1,0 +1,60 @@
+package com.manning.airinaction.html {
+    
+    import flash.display.MovieClip;
+    import flash.html.HTMLLoader;
+    import flash.net.URLRequest;
+    import fl.controls.ScrollBar;
+    import flash.events.Event;
+    
+    public class Main extends MovieClip {
+        
+        private var _htmlLoader:HTMLLoader;
+        private var _scrollBarH:ScrollBar;
+        private var _scrollBarV:ScrollBar;
+        
+        public function Main() {
+            _scrollBarV = new ScrollBar();                                    
+            _scrollBarV.height = stage.stageHeight - 16;
+            _scrollBarV.x = stage.stageWidth - 16;
+            _scrollBarV.addEventListener(Event.SCROLL, scrollVerticalHandler);
+            addChild(_scrollBarV);
+
+            _scrollBarH = new ScrollBar();                                    
+            _scrollBarH.direction = "horizontal";
+            _scrollBarH.width = stage.stageWidth - 16;
+            _scrollBarH.x = 0;
+            _scrollBarH.y = stage.stageHeight - 16;
+            _scrollBarH.addEventListener(Event.SCROLL, scrollHorizontalHandler);
+            addChild(_scrollBarH);
+
+            _htmlLoader = new HTMLLoader();
+            _htmlLoader.width = stage.stageWidth - 16;
+            _htmlLoader.height = stage.stageHeight - 16;
+            _htmlLoader.addEventListener(Event.COMPLETE, completeHandler);     
+            _htmlLoader.addEventListener(Event.SCROLL, scrollHandler);         
+            _htmlLoader.load(new URLRequest("http://www.manning.com/lott"));                         
+            addChild(_htmlLoader);
+        }
+
+        private function completeHandler(event:Event):void {
+            _htmlLoader.scrollH = 0;
+            _htmlLoader.scrollV = 0;
+            _scrollBarV.setScrollProperties(_htmlLoader.height, 0, _htmlLoader.contentHeight - _htmlLoader.height);                           
+            _scrollBarH.setScrollProperties(_htmlLoader.width, 0, _htmlLoader.contentWidth - _htmlLoader.width);                             
+        }
+        
+        private function scrollVerticalHandler(event:Event):void {              
+            _htmlLoader.scrollV = _scrollBarV.scrollPosition;
+        }
+        
+        private function scrollHorizontalHandler(event:Event):void {            
+            _htmlLoader.scrollH = _scrollBarH.scrollPosition;            
+        }
+        
+        private function scrollHandler(event:Event):void {                      
+            _scrollBarV.scrollPosition = _htmlLoader.scrollV;
+        }
+                
+    }
+    
+}

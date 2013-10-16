@@ -1,0 +1,12 @@
+private var _loader:URLLoader;
+
+private function startXmlRequest():void {
+    _loader = new URLLoader();
+    _loader.addEventListener(Event.COMPLETE, loaderCompleteHandler);
+    _loader.load(new URLRequest("data.xml"));
+    trace(_loader.data);
+}
+
+private function loaderCompleteHandler(event:Event):void {
+    trace(_loader.data);
+}

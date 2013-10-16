@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="creationCompleteHandler();">
+    <mx:Script>
+    <![CDATA[
+        import flash.filesystem.File;
+        
+        private function creationCompleteHandler():void {
+            var file:File = File.desktopDirectory;
+            file.browseForOpen("Select a file");
+            file.addEventListener(Event.SELECT, selectEventHandler);
+        }
+        
+        private function selectEventHandler(event:Event):void {
+            var file:File = event.target as File;
+            output.text = "File: " + file.name;
+            output.text += "\nPath: " + file.nativePath;
+        }
+        
+    ]]>
+    </mx:Script>
+    <mx:TextArea id="output" width="100%" height="100%" />
+</mx:WindowedApplication>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"  
+    windowComplete="windowCompleteHandler();"                                     
+    creationComplete="creationCompleteHandler();">
+
+    <mx:Script>
+        <![CDATA[
+            import mx.events.AIREvent;
+            
+            private function creationCompleteHandler():void {
+                var window:SimpleTextWindow = new SimpleTextWindow();
+                window.open();
+            }
+            
+            private function windowCompleteHandler():void {                        
+                nativeWindow.x = (Capabilities.screenResolutionX - width) / 2;     
+                nativeWindow.y = (Capabilities.screenResolutionY - height) / 2;    
+            }
+            
+        ]]>
+    </mx:Script>
+</mx:WindowedApplication>

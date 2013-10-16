@@ -1,0 +1,23 @@
+package com.manning.airinaction.questionnaire {
+    
+    public class Response {
+        
+        private var _question:String;
+        private var _answer:String;
+        
+        public function get question():String {
+            return _question;
+        }
+        
+        public function get answer():String {
+            return _answer;
+        }
+        
+        public function Response(question:String, answer:String) {
+            _question = question;
+            _answer = answer;
+        }
+        
+    }
+    
+}

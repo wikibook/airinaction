@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Window xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="800" height="800" closing="closingHandler(event);">
+    <mx:Script>
+        <![CDATA[
+            
+            [Bindable]
+            private var _url:String;
+            
+            public function set url(value:String):void {
+                _url = value;
+            }
+            
+            private function closingHandler(event:Event):void {
+                event.preventDefault();
+                visible = false;
+            }
+            
+        ]]>
+    </mx:Script>
+    <mx:HTML id="html" location="{_url}" width="100%" height="100%" />
+</mx:Window>

@@ -1,0 +1,39 @@
+package {
+    
+    import flash.display.MovieClip;
+    import flash.display.NativeWindow;
+    import flash.display.NativeWindowInitOptions;
+    import flash.display.NativeWindowType;
+    import flash.display.NativeWindowSystemChrome;
+    import flash.text.TextField;
+    import flash.text.TextFieldAutoSize;
+    import flash.display.StageScaleMode;
+    import flash.display.StageAlign;
+    
+    public class Example extends MovieClip {
+        
+        public function Example() {
+            
+            var options:NativeWindowInitOptions = new NativeWindowInitOptions();
+            options.type = NativeWindowType.UTILITY;
+            
+            var window:NativeWindow = new NativeWindow(options);
+            window.width = 200;
+            window.height = 200;
+
+            var textField:TextField = new TextField();
+            textField.autoSize = TextFieldAutoSize.LEFT;
+            textField.text = "New Window Content";
+            
+            window.stage.scaleMode = StageScaleMode.NO_SCALE;
+            window.stage.align = StageAlign.TOP_LEFT;
+            
+            window.stage.addChild(textField);
+
+            window.activate();
+            
+        }
+        
+    }
+    
+}

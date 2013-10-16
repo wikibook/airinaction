@@ -1,0 +1,21 @@
+package {
+    
+    import flash.display.MovieClip;
+    import flash.text.TextField;
+    import flash.display.StageDisplayState;
+    
+    public class Example extends MovieClip {
+        
+        public function Example() {
+            
+            stage.displayState = StageDisplayState.FULL_SCREEN;
+            
+            var textField:TextField = new TextField();
+            textField.text = "Full screen example";
+            addChild(textField);
+
+        }
+
+    }
+    
+}

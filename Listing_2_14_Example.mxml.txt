@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" creationComplete="creationCompleteHandler();">
+    <mx:Script>
+        <![CDATA[
+            import mx.events.AIREvent;
+            
+            private function creationCompleteHandler():void {
+                var window:SimpleTextWindow = new SimpleTextWindow();
+
+                window.addEventListener(
+                            AIREvent.WINDOW_COMPLETE,
+                             windowCompleteHandler);                            
+
+                window.open();
+            }
+            
+            private function windowCompleteHandler(event:AIREvent):void {       
+                event.target.stage.nativeWindow.x = 0;                          
+                event.target.stage.nativeWindow.y = 0;                          
+            }
+            
+        ]]>
+    </mx:Script>
+</mx:WindowedApplication>

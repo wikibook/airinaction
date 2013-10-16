@@ -1,0 +1,45 @@
+package {
+    
+    import flash.display.MovieClip;
+    import flash.filesystem.File;
+    import flash.filesystem.FileStream;
+    import flash.filesystem.FileMode;
+    import flash.events.Event;
+    import flash.events.MouseEvent;
+    import flash.events.ProgressEvent;
+    
+    public class TextFileReader extends MovieClip {
+        
+        public function TextFileReader() {
+            _button.addEventListener(MouseEvent.CLICK, browseForFile);
+        }
+        
+        private function browseForFile(event:MouseEvent):void {
+            var desktop:File = File.desktopDirectory;
+            desktop.addEventListener(Event.SELECT, selectHandler);
+            desktop.browseForOpen("Select a text file");                                  
+        }
+        
+        private function selectHandler(event:Event):void {
+            var file:File = event.target as File;
+            _textArea.text = "";                                                          
+            var stream:FileStream = new FileStream();
+            stream.addEventListener(ProgressEvent.PROGRESS, progressHandler);             
+            stream.addEventListener(Event.COMPLETE, completeHandler);                     
+            stream.openAsync(file, FileMode.READ);                                        
+        }
+        
+        private function progressHandler(event:ProgressEvent):void {
+            var stream:FileStream = event.target as FileStream;
+            if(stream.bytesAvailable) {                                                   
+                _textArea.text += stream.readUTFBytes(stream.bytesAvailable);             
+            }
+        }
+
+        private function completeHandler(event:Event):void {
+            event.target.close();                                                         
+        }
+        
+    }
+    
+}

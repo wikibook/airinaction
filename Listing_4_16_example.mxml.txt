@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
+    <mx:Script>
+        <![CDATA[
+            
+            private function startDragImage():void {
+                var clipboard:Clipboard = new Clipboard();
+                var bitmapData:BitmapData = (image.content as Bitmap).bitmapData;          
+                clipboard.setData(ClipboardFormats.BITMAP_FORMAT, bitmapData, false);      
+                var point:Point = new Point(-image.mouseX, -image.mouseY);
+                NativeDragManager.doDrag(image, clipboard, bitmapData, point);             
+            }
+            
+        ]]>
+    </mx:Script>
+    <mx:Image id="image" source="image.jpg" mouseDown="startDragImage();" />               
+</mx:WindowedApplication>

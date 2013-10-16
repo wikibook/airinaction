@@ -1,0 +1,47 @@
+package com.manning.airinaction.questionnaire {
+    
+    import flash.display.MovieClip;
+    import flash.events.MouseEvent;
+    import flash.html.HTMLLoader;
+    import flash.net.URLRequest;
+    import flash.events.Event;
+    import fl.controls.TextArea;
+    
+    public class Main extends MovieClip {
+        
+        private var _htmlLoader:HTMLLoader;
+        private var _textArea:TextArea;
+        
+        public function Main() {
+            _htmlLoader = new HTMLLoader();
+            _htmlLoader.width = stage.stageWidth;
+            _htmlLoader.height = stage.stageHeight;
+            _htmlLoader.addEventListener(Event.COMPLETE, completeHandler);
+            _htmlLoader.load(new URLRequest("questionnaire.html"));             
+            addChild(_htmlLoader);
+            
+            _textArea = new TextArea();
+            _textArea.width = stage.stageWidth;
+            _textArea.height = stage.stageHeight;
+            
+        }
+        
+        private function completeHandler(event:Event):void {
+            _htmlLoader.window.document.getElementById("submitButton").addEventListener(MouseEvent.CLICK, clickHandler);
+        }
+        
+        private function clickHandler(event:Object):void {
+            removeChild(_htmlLoader);
+            var responses:Array = _htmlLoader.window.getSurveyResponses();         
+            _textArea.text = "";
+            var response:Object;
+            for(var i:Number = 0; i < responses.length; i++) {
+                response = responses[i] as Response;
+                _textArea.text += response.question;
+                _textArea.text += "\n\t" + response.answer + "\n\n";
+            }
+            addChild(_textArea);
+        }
+    }
+    
+}

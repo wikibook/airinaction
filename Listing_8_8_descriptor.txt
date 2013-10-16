@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns="http://ns.adobe.com/air/application/1.0">
+    <id>AirTube</id>
+    <filename>AirTube</filename>
+    <name>AirTube</name>
+    <version>1.0</version>
+    <initialWindow>
+        <content>AirTube.swf</content>
+    </initialWindow>
+    <fileTypes>
+        <fileType>
+            <name>AirTubeVideo</name>
+            <extension>atv</extension>
+        </fileType>
+    </fileTypes>
+</application>

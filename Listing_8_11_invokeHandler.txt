@@ -1,0 +1,15 @@
+    private function invokeHandler(event:InvokeEvent):void {
+        if(event.arguments.length > 0) {
+            var file:File = new File(event.arguments[0]);
+            var fileName:Array = file.name.split(".");
+            if(fileName[1] != undefined) {
+                if(fileName[1] == "atv") {
+                    var reader:FileStream = new FileStream();
+                    reader.open(file, FileMode.READ);
+                    reader.position = 0;
+                    var id:String = reader.readUTF();
+                    _service.getVideoById(id);
+                }
+            }
+        }
+    }

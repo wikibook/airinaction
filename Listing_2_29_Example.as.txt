@@ -1,0 +1,41 @@
+package {
+    
+    import flash.display.MovieClip;
+    import flash.display.NativeMenu;
+    import flash.display.NativeMenuItem;
+    import flash.display.Sprite;
+    import flash.events.MouseEvent;
+    
+    public class Example extends MovieClip {
+        
+        private var _menu:NativeMenu;
+        
+        public function Example() {
+            
+            _menu = new NativeMenu();                                 
+            var item:NativeMenuItem = new NativeMenuItem("a");        
+            _menu.addItem(item);                                      
+            item = new NativeMenuItem("b");                           
+            _menu.addItem(item);                                      
+            item = new NativeMenuItem("c");                           
+            _menu.addItem(item);                                      
+            item = new NativeMenuItem("d");                           
+            _menu.addItem(item);                                      
+            
+            var rectangle:Sprite = new Sprite();                      
+            rectangle.graphics.lineStyle(0, 0, 1);                    
+            rectangle.graphics.beginFill(0, 1);                       
+            rectangle.graphics.drawRect(0, 0, 100, 100);              
+            rectangle.graphics.endFill();                             
+            addChild(rectangle);                                      
+            
+            rectangle.addEventListener(MouseEvent.MOUSE_DOWN, showMenu); 
+
+        }
+        
+        private function showMenu(event:MouseEvent):void {                
+            _menu.display(stage, mouseX, mouseY);                         
+        }                                                                 
+    }
+    
+}

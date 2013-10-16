@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Window xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="400" type="utility" closing="closingHandler(event);" creationComplete="creationCompleteHandler();">
+    <mx:Script>
+        <![CDATA[
+            import com.manning.airtube.services.AirTubeService;
+            import com.manning.airtube.data.ApplicationData;
+            
+            [Bindable]
+            private var _applicationData:ApplicationData;
+            
+            private function creationCompleteHandler():void {
+                _applicationData = ApplicationData.getInstance();
+            }
+            
+            private function closingHandler(event:Event):void {
+                event.preventDefault();
+                visible = false;
+		videoDisplay.stop(); //추가 
+                videoDisplay.source=null;  //추가  
+            }
+            
+            private function saveOffline():void {
+                AirTubeService.getInstance().saveToOffline(_applicationData.currentVideo);
+            }
+            
+            private function togglePlayback():void {
+                if(videoDisplay.playing) {
+                    videoDisplay.pause();
+                    playPauseButton.label = "Play";
+                }
+                else {
+                    videoDisplay.play();
+                    playPauseButton.label = "Pause";
+                }
+            }
+
+            private function viewOnYouTube():void {
+                AirTube.getInstance().launchHTMLWindow(_applicationData.currentVideo.video.url);                                      
+                videoDisplay.pause();                                              
+                playPauseButton.label = "Play";                                    
+            }
+            
+        ]]>
+    </mx:Script>
+    <mx:VBox>
+        <mx:Label text="{_applicationData.currentVideo.video.title}" />
+        <mx:VideoDisplay id="videoDisplay" source="{_applicationData.currentVideo.flvUrl}" width="400" height="300" />
+        <mx:HBox id="progressContainer" width="100%" visible="{_applicationData.downloadProgress > 0}" includeInLayout="{progressContainer.visible}">
+            <mx:Label text="download progress" />
+            <mx:HSlider id="progressIndicator" enabled="false" width="100%" minimum="0" maximum="1" value="{_applicationData.downloadProgress}" />
+        </mx:HBox>
+        <mx:HBox>
+            <mx:Button id="playPauseButton" label="Pause" click="togglePlayback();" />
+            <mx:Button id="saveOfflineButton" label="Save Offline" visible="{!_applicationData.currentVideo.offline}" click="saveOffline();" enabled="{!(_applicationData.downloadProgress > 0)}" />
+            <mx:Button label="View On YouTube"                                      
+                visible="{_applicationData.online}"                                 
+                click="viewOnYouTube();" />                                         
+        </mx:HBox>
+    </mx:VBox>
+</mx:Window>

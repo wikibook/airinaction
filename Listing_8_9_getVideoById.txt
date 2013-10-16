@@ -1,0 +1,9 @@
+public function getVideoById(id:String):void {
+    var sql:SQLStatement = new SQLStatement();
+    sql.addEventListener(SQLEvent.RESULT, getOfflineVideosResultHandler);
+    sql.sqlConnection = _connection;
+    sql.itemClass = Video;
+    sql.text = "SELECT * FROM videos WHERE id = @id";
+    sql.parameters["@id"] = id;
+    sql.execute();
+}

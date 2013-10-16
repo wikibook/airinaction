@@ -1,0 +1,21 @@
+function getSurveyResponses() {
+    var response;
+    var options = document.questionnaire.skyColor;
+    for(var i = 0; i <  options.length; i++) {
+        if(options[i].checked) {
+            response = options[i].value;
+        }
+    }
+    var response1 = new window.runtime.com.manning.airinaction.questionnaire.Response(document.getElementById("question1").innerText, response);
+
+
+    options = document.questionnaire.skySize;
+    for(i = 0; i <  options.length; i++) {
+        if(options[i].checked) {
+            response = options[i].value;
+        }
+    }
+    var response2 = new window.runtime.com.manning.airinaction.questionnaire.Response(document.getElementById("question2").innerText, response);
+
+    return [response1, response2];
+}

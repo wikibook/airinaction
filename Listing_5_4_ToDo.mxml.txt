@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" 
+    creationComplete="creationCompleteHandler();">
+     <mx:Script>
+        <![CDATA[
+            
+            private var _connection:SQLConnection;
+            
+            private function creationCompleteHandler():void {
+                var file:File = File.applicationStorageDirectory.resolvePath("database.db");
+                _connection = new SQLConnection();
+                _connection.addEventListener(SQLEvent.OPEN, openHandler);
+                _connection.openAsync(file, SQLMode.CREATE);
+            }
+            
+            private function openHandler(event:SQLEvent):void {
+                var sql:SQLStatement = new SQLStatement();
+                sql.sqlConnection = _connection;
+                sql.text = "CREATE TABLE IF NOT EXISTS todo(" +
+                           "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                           "priority INTEGER, " +
+                           "name TEXT, " + 
+                           "description TEXT, " +
+                           "mustBeDoneBy DATE)";
+                sql.addEventListener(SQLEvent.RESULT, selectToDoItems);
+                sql.execute();
+            }
+            
+            private function addItem(event:MouseEvent):void {                   
+            }
+
+            private function updateItem(event:MouseEvent):void {                
+            }
+
+        ]]>
+    </mx:Script>
+    <mx:VBox width="100%" height="100%">
+        <mx:Form>                                                                
+            <mx:FormHeading id="formHeading" label="New Item" />
+            <mx:FormItem label="Name">
+                <mx:TextInput id="itemName" text="{_selectedItem.name}" />
+            </mx:FormItem>
+            <mx:FormItem label="Description">
+                <mx:TextInput id="itemDescription" text="{_selectedItem.description}" />
+            </mx:FormItem>
+            <mx:FormItem label="Priority">
+                <mx:ComboBox id="itemPriority" selectedItem="{_selectedItem.priority}">
+                    <mx:dataProvider>
+                        <mx:ArrayCollection>
+                            <mx:Number>1</mx:Number>
+                            <mx:Number>2</mx:Number>
+                            <mx:Number>3</mx:Number>
+                            <mx:Number>4</mx:Number>
+                        </mx:ArrayCollection>
+                    </mx:dataProvider>
+                </mx:ComboBox>
+            </mx:FormItem>
+            <mx:FormItem label="Must Be Done By">
+                <mx:DateField id="itemMustBeDoneBy" selectedDate="{_selectedItem.mustBeDoneBy}" />
+            </mx:FormItem>
+            <mx:FormItem>
+                <mx:Button id="formButton" label="Add" click="addItem(event);" />
+            </mx:FormItem>
+        </mx:Form>
+    </mx:VBox>
+    <mx:states>
+        <mx:State name="Edit">                                                     
+            <mx:SetProperty target="{formHeading}"                                  
+                name="label" value="Edit Item" />                                  
+            <mx:SetProperty target="{formButton}"                                  
+                name="label" value="Update" />                                     
+            <mx:SetEventHandler target="{formButton}"                              
+                name="click" handlerFunction="updateItem" />                       
+        </mx:State>
+    </mx:states>
+</mx:WindowedApplication>

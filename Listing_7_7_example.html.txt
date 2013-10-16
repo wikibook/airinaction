@@ -1,0 +1,18 @@
+<html>
+    <script>
+
+        var pageTitle = "Example";
+        var description = "This is an example HTML page";
+
+        function showAlert() {
+            alert(description);
+        }
+
+    </script>
+    <body>
+        <p id="p1">
+            HTML in AIR
+        </p>
+        <button onclick="showAlert()">Click</button>
+    </body>
+</html>

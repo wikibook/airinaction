@@ -1,0 +1,46 @@
+package com.manning.airinaction.utilities {
+    import flash.display.Loader;
+    import flash.system.LoaderContext;
+    import flash.system.ApplicationDomain;
+    import flash.events.Event;
+    import flash.events.EventDispatcher;
+    import flash.net.URLRequest;
+
+    public class AirBadgeService extends EventDispatcher {
+        
+        private var _loader:Loader;
+        private var _service:Object;
+        
+        public function AirBadgeService() {
+            
+            _loader = new Loader();
+            var context:LoaderContext = new LoaderContext();
+            context.applicationDomain = ApplicationDomain.currentDomain;
+            
+            _loader.contentLoaderInfo.addEventListener(Event.INIT, initHandler);
+            _loader.load(new URLRequest("http://airdownload.adobe.com/air/browserapi/air.swf"), context);
+        }
+        
+        private function initHandler(event:Event):void {
+            _service = _loader.content;
+            dispatchEvent(new Event(Event.COMPLETE));
+        }
+        
+        public function getStatus():String {
+            return _service.getStatus();
+        }
+        
+        public function getApplicationVersion(applicationId:String, publisherId:String, callback:Function):void {
+            _service.getApplicationVersion(applicationId, publisherId, callback);
+        }
+        
+        public function installApplication(url:String, runtimeVersion:String, parameters:Array = null):void {
+            _service.installApplication(url, runtimeVersion, parameters);
+        }
+        
+        public function launchApplication(applicationId:String, publisherId:String, parameters:Array = null):void {
+            _service.launchApplication(applicationId, publisherId, parameters);
+        }
+
+    }
+}

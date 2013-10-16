@@ -1,0 +1,33 @@
+package com.manning.books.airinaction {
+
+    import flash.display.Sprite;
+    import flash.events.FileListEvent;
+    import flash.filesystem.File;
+    import flash.text.TextField;
+     
+    public class Example extends Sprite {
+     
+       private var _textField:TextField;
+     
+       public function Example() {
+          _textField = new TextField();                                 
+          _textField.width = stage.stageWidth;                          
+          _textField.height = stage.stageHeight;                        
+          addChild(_textField);                                         
+          var desktop:File = File.desktopDirectory;                     
+          desktop.addEventListener(FileListEvent.DIRECTORY_LISTING,     
+                                   desktopListingHandler);              
+          desktop.getDirectoryListingAsync();                           
+       }
+     
+       private function desktopListingHandler(event:FileListEvent):void {
+           var files:Array = event.files;                               
+           var file:File;
+           for (var i:Number = 0; i < files.length; i++) {
+               file = files[i] as File;
+               _textField.appendText(">" + file.nativePath + "\n");     
+           }
+       }     
+
+    }
+}

@@ -1,0 +1,24 @@
+package com.manning.airinaction.html {
+    import flash.html.HTMLHost;
+    import flash.desktop.NativeApplication;
+    import flash.html.HTMLWindowCreateOptions;
+    import flash.html.HTMLLoader;
+    import flash.geom.Rectangle;
+    
+    public class CustomHTMLHost extends HTMLHost {
+        public function CustomHTMLHost(defaultBehavior:Boolean = true) {
+            super(defaultBehavior);
+        }
+
+        override public function updateTitle(title:String):void {
+            NativeApplication.nativeApplication.openedWindows[0].title = title;            
+        }
+        
+        override public function createWindow(options:HTMLWindowCreateOptions):HTMLLoader {
+            var bounds:Rectangle = new Rectangle(options.x, options.y, options.width, options.height);
+            var loader:HTMLLoader = HTMLLoader.createRootWindow(true, null, true, bounds);
+            return loader;
+        }
+        
+    }
+}

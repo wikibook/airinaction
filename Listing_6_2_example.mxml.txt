@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" creationComplete="creationCompleteHandler();">
+    <mx:Script>
+        <![CDATA[
+            import air.net.SocketMonitor;
+            
+            private var _monitor:SocketMonitor;
+            private var _socket:Socket;
+            private var _timer:Timer;
+            
+            private const SERVER:String = "time-A.timefreq.bldrdoc.gov";
+            private const PORT:int = 13;
+
+            private function creationCompleteHandler():void {
+                _monitor = new SocketMonitor(SERVER, PORT);                                
+                _monitor.addEventListener(StatusEvent.STATUS, statusHandler);              
+                _monitor.start();                                                          
+
+                _socket = new Socket();
+                _socket.addEventListener(ProgressEvent.SOCKET_DATA, socketDataHandler);
+
+                _timer = new Timer(10000);                                                 
+                _timer.addEventListener(TimerEvent.TIMER, timerHandler);
+            }
+            
+            private function statusHandler(event:StatusEvent):void {
+                if(!_monitor.available) {                                                  
+                    timeText.text = "Server unavailable. Will reconnect when the server is next available.";
+                    _timer.stop();                                                         
+                }
+                else {
+                    timerHandler();
+                    _timer.start();                                                        
+                }
+            }
+            
+            private function socketDataHandler(event:ProgressEvent):void {
+                var fullTime:String = _socket.readUTFBytes(_socket.bytesAvailable);        
+                var time:String = fullTime.split(" ")[2];
+                timeText.text = "The current time (UTC) is: " + time;
+                _socket.close();                                                           
+            }
+            
+            private function timerHandler(event:TimerEvent = null):void {
+                if(_monitor.available && !_socket.connected) {                            
+                    _socket.connect(SERVER, PORT);                                        
+                }
+            }
+            
+        ]]>
+    </mx:Script>
+    <mx:Text id="timeText" width="100%" height="100%" />
+</mx:WindowedApplication>

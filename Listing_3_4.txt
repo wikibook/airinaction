@@ -1,0 +1,9 @@
+private function getDocumentsDirectoryListing():void {
+    var documentsDirectory:File = File.documentsDirectory;
+    documentsDirectory.addEventListener(FileListEvent.DIRECTORY_LISTING, directoryListingHandler);
+    documentsDirectory.getDirectoryListingAsync();
+}
+
+private function directoryListingHandler(event:FileListEvent):void {
+    directoryListingList.dataProvider = event.files;
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" creationComplete="creationCompleteHandler();">
+    <mx:Script>
+    <![CDATA[
+	import flash.filesystem.File;
+
+	private function creationCompleteHandler():void {
+             print(File.userDirectory.nativePath);                      
+             print(File.documentsDirectory.nativePath);                
+             print(File.desktopDirectory.nativePath);                   
+             print(File.applicationStorageDirectory.nativePath);        
+             print(File.applicationDirectory.nativePath);               
+	}
+
+	private function print(string:String):void { 
+             output.text += ">" + string + "\n";                        
+	}
+                                                                    
+]]>
+</mx:Script>
+<mx:TextArea id="output" width="100%" height="100%" />
+</mx:WindowedApplication>

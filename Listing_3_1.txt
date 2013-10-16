@@ -1,0 +1,6 @@
+var devoTracks:Array = new Array("Freedom Of Choice", "Planet Earth", "Cold War", "Don't You Know");
+devoTracks.push("Mr. B's Ballroom");
+var trackCount:int = devoTracks.length;
+for(var i:int = 0; i < trackCount; i++) {
+  trace(devoTracks[i]);
+}

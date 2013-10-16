@@ -1,0 +1,58 @@
+package com.manning.airtube.services {
+    
+    import com.adobe.webapis.youtube.YouTubeService;
+    import com.adobe.webapis.youtube.events.YouTubeServiceEvent;
+    import com.manning.airtube.data.AirTubeVideo;
+    import com.manning.airtube.data.ApplicationData;
+    
+    import flash.events.Event;
+
+    public class AirTubeService {
+        
+        static private var _instance:AirTubeService;
+        
+        private var _proxied:YouTubeService;                             
+        
+        public function set key(value:String):void {                     
+            _proxied.apiKey = value;                                     
+        }                                                                
+
+
+        public function AirTubeService() {
+
+            _proxied = new YouTubeService();                             
+            _proxied.addEventListener(YouTubeServiceEvent.VIDEOS_LIST_BY_TAG, getVideosByTagsResultHandler);
+        }
+        
+        static public function getInstance():AirTubeService {
+            if(_instance == null) {
+                _instance = new AirTubeService();
+            }
+            return _instance;
+        }
+        
+        public function getVideosByTags(tags:String):void {               
+            if(_proxied.apiKey.length == 0) {                             
+                throw Error("YouTube API key not set");                   
+            }                                                             
+                _proxied.videos.listByTag(tags);                              
+        }                                                                 
+
+        private function getVideosByTagsResultHandler(event:YouTubeServiceEvent):void {                                     
+            var videos:Array = event.data.videoList as Array;             
+            for(var i:Number = 0; i < videos.length; i++) {               
+                videos[i] = new AirTubeVideo(videos[i]);                  
+            }                                                             
+            ApplicationData.getInstance().videos = videos;                
+        }
+
+        public function configureVideoForPlayback(video:AirTubeVideo):void {
+            ApplicationData.getInstance().currentVideo = video;
+            if(video.flvUrl == null) {
+                new YouTubeFlvUrlRetriever().getUrl(video);
+            }
+        }
+
+   
+    }
+}

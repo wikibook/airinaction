@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
+    <mx:Script>
+        <![CDATA[
+            
+            private function startInitiatorDrag():void {
+                initiator.text = String(Math.random());                                    
+                var clipboard:Clipboard = new Clipboard();                                 
+                clipboard.setData(ClipboardFormats.TEXT_FORMAT, initiator.text);           
+                NativeDragManager.doDrag(initiator, clipboard);                            
+            }
+            
+        ]]>
+    </mx:Script>
+    <mx:HBox>
+        <mx:Canvas width="200" height="50" backgroundColor="#00FF00">
+            <mx:Label id="initiatorLabel" width="100%" height="100%"                      
+                mouseDown="startInitiatorDrag();" />                                       
+        </mx:Canvas>
+        <mx:VBox>
+            <mx:Canvas width="200" height="100" backgroundColor="0xFFFF00">
+                <mx:Text width="100%" height="100%" />                                     
+            </mx:Canvas>
+            <mx:Canvas width="200" height="100" backgroundColor="0xFFFF00">
+                <mx:Text width="100%" height="100%" />                                     
+            </mx:Canvas>
+        </mx:VBox>
+    </mx:HBox>

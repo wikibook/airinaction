@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns="http://ns.adobe.com/air/application/1.0">
+    <id>com.manning.airinaction.BrowserInvoke</id>
+    <filename>BrowserInvoke</filename>
+    <name>Initialize</name>
+    <version>1.0</version>
+    <initialWindow>
+        <content>BrowserInvoke.swf</content>
+    </initialWindow>
+    <allowBrowserInvocation>true</allowBrowserInvocation>
+</application>

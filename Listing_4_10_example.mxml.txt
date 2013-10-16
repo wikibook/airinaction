@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
+    <mx:Script>
+        <![CDATA[
+            import com.manning.airinaction.Address;
+            
+            [Bindable]                                                           
+            private var _address:Address;                                        
+            
+            private function paste():void {
+                var clipboard:Clipboard = Clipboard.generalClipboard;            
+                if(clipboard.hasFormat("address")) {                            
+                    _address = clipboard.getData("address") as Address;          
+                }
+            }
+            
+        ]]>
+    </mx:Script>
+    <mx:Form>
+        <mx:FormItem label="Address 1">
+            <mx:Label text="{_address.address1}" />
+        </mx:FormItem>
+        <mx:FormItem label="Address 2">
+            <mx:Label text="{_address.address2}" />
+        </mx:FormItem>
+        <mx:FormItem label="City">
+            <mx:Label text="{_address.city}" />
+        </mx:FormItem>
+        <mx:FormItem label="State/Province">
+            <mx:Label text="{_address.province}" />
+        </mx:FormItem>
+        <mx:FormItem label="Postal Code">
+            <mx:Label text="{_address.postalCode}" />
+        </mx:FormItem>
+        <mx:FormItem>
+            <mx:Button label="Paste" click="paste();" />
+        </mx:FormItem>
+    </mx:Form>
+</mx:WindowedApplication>

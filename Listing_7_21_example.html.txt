@@ -1,0 +1,17 @@
+<html>
+    <script>
+
+        function loadHandler() {
+            var shape = new window.runtime.flash.display.Shape();
+            shape.graphics.lineStyle(0, 0, 0);
+            shape.graphics.beginFill(0, 1);
+            shape.graphics.drawRect(0, 0, 100, 50);
+            shape.graphics.endFill();
+            var mainWindow = window.runtime.flash.desktop.NativeApplication.nativeApplication.openedWindows[0];
+            mainWindow.stage.addChild(shape);
+        }
+
+    </script>
+    <body onload="loadHandler()">
+    </body>
+</html>

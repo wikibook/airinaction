@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" 
+    creationComplete="creationCompleteHandler();">
+     <mx:Script>
+        <![CDATA[
+            import com.manning.todolist.data.ToDoItem;
+            import com.manning.todolist.ui.ToDoListRenderer;
+            
+            private var _connection:SQLConnection;
+            
+            [Bindable]
+            private var _selectedItem:ToDoItem;
+            
+            private function creationCompleteHandler():void {
+                var file:File = File.applicationStorageDirectory.resolvePath("database.db");
+                _connection = new SQLConnection();
+                _connection.addEventListener(SQLEvent.OPEN, openHandler);
+                _connection.openAsync(file, SQLMode.CREATE);
+            }
+            
+            private function openHandler(event:SQLEvent):void {
+                var sql:SQLStatement = new SQLStatement();
+                sql.sqlConnection = _connection;
+                sql.text = "CREATE TABLE IF NOT EXISTS todo(" +
+                           "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                           "priority INTEGER, " +
+                           "name TEXT, " + 
+                           "description TEXT, " +
+                           "mustBeDoneBy DATE)";
+                sql.addEventListener(SQLEvent.RESULT, selectToDoItems);
+                sql.execute();
+            }
+            
+            private function addItem(event:MouseEvent):void {
+                var sql:SQLStatement = new SQLStatement();
+                sql.sqlConnection = _connection;
+                sql.text = "INSERT INTO todo(priority, name, description, mustBeDoneBy)" + 
+                           "VALUES(@priority, @name, @description, @mustBeDoneBy)";
+                sql.parameters["@priority"] = itemPriority.value;
+                sql.parameters["@name"] = itemName.text;
+                sql.parameters["@description"] = itemDescription.text;
+                sql.parameters["@mustBeDoneBy"] = itemMustBeDoneBy.selectedDate;                
+                sql.addEventListener(SQLEvent.RESULT, selectToDoItems);
+                sql.execute();
+            }
+
+            private function updateItem(event:MouseEvent):void {
+                var sql:SQLStatement = new SQLStatement();
+                sql.sqlConnection = _connection;
+                sql.text = "UPDATE todo SET priority = @priority, name = @name, description = @description, mustBeDoneBy = @mustBeDoneBy WHERE id = @id";
+                sql.parameters["@priority"] = itemPriority.value;
+                sql.parameters["@name"] = itemName.text;
+                sql.parameters["@description"] = itemDescription.text;
+                sql.parameters["@mustBeDoneBy"] = itemMustBeDoneBy.selectedDate;                
+                sql.parameters["@id"] = _selectedItem.id;                
+                sql.addEventListener(SQLEvent.RESULT, selectToDoItems);
+                sql.execute();
+                currentState = "";
+                _selectedItem = null;
+            }
+
+            private function selectToDoItems(event:SQLEvent = null):void {
+                var sql:SQLStatement = new SQLStatement();
+                sql.sqlConnection = _connection;
+                sql.text = "SELECT id, priority, name, description, mustBeDoneBy FROM todo ORDER BY mustBeDoneBy, priority";
+                sql.itemClass = ToDoItem;
+                sql.addEventListener(SQLEvent.RESULT, selectHandler);
+                sql.execute();                
+            }
+            
+            private function selectHandler(event:SQLEvent):void {
+                var result:SQLResult = event.target.getResult();                 
+                items.removeAllChildren();                                       
+                var item:ToDoListRenderer;
+                if(result != null && result.data != null) {
+                    for(var i:Number = 0; i < result.data.length; i++) {         
+                        item = new ToDoListRenderer();
+                        item.data = result.data[i];                              
+                        item.addEventListener("delete", deleteItem, false, 0, true);                                                 
+                        item.addEventListener("edit", editItem, false, 0, true);                                                   
+                        items.addChild(item);
+                    }
+                }
+            }
+
+                private function deleteItem(event:Event):void {
+                }
+
+                private function editItem(event:Event):void {
+                }
+                                    
+        ]]>
+    </mx:Script>
+    <mx:VBox width="100%" height="100%">
+        <mx:VBox id="items" width="100%" height="50%" backgroundColor="#FFFFFF" />
+        <mx:Form>
+            <mx:FormHeading id="formHeading" label="New Item" />
+            <mx:FormItem label="Name">
+                <mx:TextInput id="itemName" text="{_selectedItem.name}" />
+            </mx:FormItem>
+            <mx:FormItem label="Description">
+                <mx:TextInput id="itemDescription" text="{_selectedItem.description}" />
+            </mx:FormItem>
+            <mx:FormItem label="Priority">
+                <mx:ComboBox id="itemPriority" selectedItem="{_selectedItem.priority}">
+                    <mx:dataProvider>
+                        <mx:ArrayCollection>
+                            <mx:Number>1</mx:Number>
+                            <mx:Number>2</mx:Number>
+                            <mx:Number>3</mx:Number>
+                            <mx:Number>4</mx:Number>
+                        </mx:ArrayCollection>
+                    </mx:dataProvider>
+                </mx:ComboBox>
+            </mx:FormItem>
+            <mx:FormItem label="Must Be Done By">
+                <mx:DateField id="itemMustBeDoneBy" selectedDate="{_selectedItem.mustBeDoneBy}" />
+            </mx:FormItem>
+            <mx:FormItem>
+                <mx:Button id="formButton" label="Add" click="addItem(event);" />
+            </mx:FormItem>
+        </mx:Form>
+    </mx:VBox>
+    <mx:states>
+        <mx:State name="Edit">
+            <mx:SetProperty target="{formHeading}" name="label" value="Edit Item" />
+            <mx:SetProperty target="{formButton}" name="label" value="Update" />
+            <mx:SetEventHandler target="{formButton}" name="click" handlerFunction="updateItem" />
+        </mx:State>
+    </mx:states>
+</mx:WindowedApplication>

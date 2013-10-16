@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical" creationComplete="creationCompleteHandler()">
+    <mx:Script>
+        <![CDATA[
+            import com.manning.airinaction.utilities.AirBadgeService;
+
+            private var _badgeService:AirBadgeService;
+        
+            private function creationCompleteHandler():void {
+                _badgeService = new AirBadgeService();
+                _badgeService.addEventListener(Event.COMPLETE, completeHandler);
+            }
+            
+            private function completeHandler(event:Event):void {
+                if(_badgeService.getStatus() == "installed") {
+                    _badgeService.getApplicationVersion("com.manning.airinaction.BrowserInvoke", " YourPublisherID ", versionHandler);                                          
+                    launchButton.enabled = true;
+                }
+            }
+            
+            private function versionHandler(version:String):void {
+                textArea.text = "version " + version + " installed";
+            }
+            
+            private function launchApplication():void {
+                _badgeService.launchApplication("com.manning.airinaction.BrowserInvoke", "YourPublisherID", ["a", "b", "c", "d"]);                                     
+            }
+            
+        ]]>
+    </mx:Script>
+    <mx:TextArea id="textArea" />
+    <mx:Button id="launchButton" label="Launch" click="launchApplication();" enabled="false" />
+</mx:Application>

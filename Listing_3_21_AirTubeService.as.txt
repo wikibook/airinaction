@@ -1,0 +1,111 @@
+package com.manning.airtube.services {
+    
+    import com.adobe.webapis.youtube.YouTubeService;
+    import com.adobe.webapis.youtube.events.YouTubeServiceEvent;
+    import com.manning.airtube.data.AirTubeVideo;
+    import com.manning.airtube.data.ApplicationData;
+    import com.manning.airtube.utilities.YouTubeFlvUrlRetriever;
+    
+    import flash.events.Event;
+    import flash.events.ProgressEvent;
+    import flash.filesystem.File;
+    import flash.filesystem.FileMode;
+    import flash.filesystem.FileStream;
+    import flash.net.URLRequest;
+    import flash.net.URLStream;
+    import flash.utils.ByteArray;
+
+    public class AirTubeService {
+        
+        static private var _instance:AirTubeService;
+        
+        private var _proxied:YouTubeService;
+        private var _flvFile:File;
+        private var _imageFile:File;
+        private var _downloadingVideo:AirTubeVideo;
+        
+        public function set key(value:String):void {
+            _proxied.apiKey = value;
+        }
+        
+        public function AirTubeService() {
+            _proxied = new YouTubeService();
+            _proxied.addEventListener(YouTubeServiceEvent.VIDEOS_LIST_BY_TAG, getVideosByTagsResultHandler);
+        }
+        
+        static public function getInstance():AirTubeService {
+            if(_instance == null) {
+                _instance = new AirTubeService();
+            }
+            return _instance;
+        }
+        
+        public function getVideosByTags(tags:String):void {
+            if(_proxied.apiKey.length == 0) {
+                throw Error("YouTube API key not set");
+            }
+            _proxied.videos.listByTag(tags);
+        }
+
+        private function getVideosByTagsResultHandler(event:YouTubeServiceEvent):void {
+            var videos:Array = event.data.videoList as Array;
+            for(var i:Number = 0; i < videos.length; i++) {
+                videos[i] = new AirTubeVideo(videos[i]);
+            }
+            ApplicationData.getInstance().videos = videos;
+            
+        }
+        
+        public function configureVideoForPlayback(video:AirTubeVideo):void {
+            ApplicationData.getInstance().currentVideo = video;
+            if(video.flvUrl == null) {
+                new YouTubeFlvUrlRetriever().getUrl(video);
+            }
+        }
+        
+        public function saveToOffline(video:AirTubeVideo):void {                           
+            _downloadingVideo = video;                                                     
+   
+            _flvFile = File.applicationStorageDirectory.resolvePath("videos/" +            
+                            video.video.id + ".flv");                                      
+            var videoLoader:URLStream = new URLStream();
+            videoLoader.load(new URLRequest(video.flvUrl));                                
+            videoLoader.addEventListener(Event.COMPLETE, videoDownloadCompleteHandler);
+            videoLoader.addEventListener(ProgressEvent.PROGRESS, videoDownloadProgressHandler);
+            
+            _imageFile = File.applicationStorageDirectory.resolvePath("thumbnails/" +      
+                              video.video.id + ".jpg");                                    
+            var imageLoader:URLStream = new URLStream();
+            imageLoader.load(new URLRequest(video.video.thumbnailUrl));                    
+            imageLoader.addEventListener(ProgressEvent.PROGRESS, imageDownloadProgressHandler);
+        }
+        
+        private function videoDownloadProgressHandler(event:ProgressEvent):void {
+            var loader:URLStream = event.target as URLStream;
+            var bytes:ByteArray = new ByteArray();
+            loader.readBytes(bytes);                                                       
+            var writer:FileStream = new FileStream();
+            writer.open(_flvFile, FileMode.APPEND);                                        
+            writer.writeBytes(bytes);                                                      
+            writer.close();
+            var ratio:Number = event.bytesLoaded / event.bytesTotal;
+            ApplicationData.getInstance().downloadProgress = ratio;                       
+                        
+        }
+        
+        private function videoDownloadCompleteHandler(event:Event):void {
+            _downloadingVideo.offline = true;                                             
+            ApplicationData.getInstance().downloadProgress = 0;                           
+        }
+
+        private function imageDownloadProgressHandler(event:ProgressEvent):void {
+            var loader:URLStream = event.target as URLStream;
+            var bytes:ByteArray = new ByteArray();
+            loader.readBytes(bytes);                                                     
+            var writer:FileStream = new FileStream();
+            writer.open(_imageFile, FileMode.APPEND);                                     
+            writer.writeBytes(bytes);                                                     
+            writer.close();
+        }
+    }
+}

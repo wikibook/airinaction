@@ -1,0 +1,69 @@
+package com.manning.playlistmaker.services {
+	import com.manning.playlistmaker.data.ApplicationData;
+	import com.manning.playlistmaker.data.Playlist;
+	
+	import flash.events.FileListEvent;
+	import flash.filesystem.File;
+	import flash.filesystem.FileMode;
+	import flash.filesystem.FileStream;
+	
+	
+	public class PlaylistService {
+		
+		public function PlaylistService() {
+			
+		}
+		
+		public function getMp3s(parentDirectory:File):void {
+			locateMp3sInDirectory(parentDirectory);
+		}
+		
+		private function locateMp3sInDirectory(parentDirectory:File):void {
+			parentDirectory.addEventListener(FileListEvent.DIRECTORY_LISTING, directoryListingHandler);
+			parentDirectory.getDirectoryListingAsync();
+		}
+		
+		private function directoryListingHandler(event:FileListEvent):void {
+			var files:Array = event.files;
+			var mp3s:Array = new Array();
+			var file:File;
+			for(var i:Number = 0; i < files.length; i++) {
+				file = files[i] as File;
+				if(file.isDirectory) {
+					locateMp3sInDirectory(file);
+				}
+				else if(file.extension == "mp3") {
+					mp3s.push(file);
+				}
+			}
+			if(mp3s.length > 0) {
+				ApplicationData.getInstance().mp3s.addTracks(mp3s);
+			}
+		}
+		
+		public function loadSavedPlaylists():void {
+			var file:File = File.applicationStorageDirectory.resolvePath("savedPlaylists.data");
+			if(file.exists) {
+				var stream:FileStream = new FileStream();
+				stream.open(file, FileMode.READ);
+				var playlists:Array = new Array();
+				while(stream.bytesAvailable) {
+					playlists = stream.readObject() as Array;
+				}
+				stream.close();
+				ApplicationData.getInstance().savedPlaylists = playlists;
+			}
+		}
+		
+		public function savePlaylists():void {
+			var file:File = File.applicationStorageDirectory.resolvePath("savedPlaylists.data");
+			var stream:FileStream = new FileStream();
+			stream.open(file, FileMode.WRITE);
+			var applicationData:ApplicationData = ApplicationData.getInstance();
+			applicationData.addPlaylist(applicationData.playlist);
+			stream.writeObject(applicationData.savedPlaylists);
+			stream.close();
+		}
+		
+	}
+}

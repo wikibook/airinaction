@@ -1,0 +1,77 @@
+     <mx:Script>
+        <![CDATA[
+            import com.manning.todolist.data.ToDoItem;
+            import com.manning.todolist.ui.ToDoListRenderer;
+            
+            private var _connection:SQLConnection;
+            
+            [Bindable]
+            private var _selectedItem:ToDoItem;                                       
+            
+            private function creationCompleteHandler():void {
+                var file:File = File.applicationStorageDirectory.resolvePath("database.db");
+                _connection = new SQLConnection();
+                _connection.addEventListener(SQLEvent.OPEN, openHandler);
+                _connection.openAsync(file, SQLMode.CREATE);
+            }
+            
+            private function openHandler(event:SQLEvent):void {
+                var sql:SQLStatement = new SQLStatement();
+                sql.sqlConnection = _connection;
+                sql.text = "CREATE TABLE IF NOT EXISTS todo(" +
+                           "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                           "priority INTEGER, " +
+                           "name TEXT, " + 
+                           "description TEXT, " +
+                           "mustBeDoneBy DATE)";
+                sql.addEventListener(SQLEvent.RESULT, selectToDoItems);                
+                sql.execute();
+            }
+
+            private function addItem(event:MouseEvent):void {
+                var sql:SQLStatement = new SQLStatement();
+                sql.sqlConnection = _connection;
+                sql.text = "INSERT INTO todo(priority, name, " +                       
+                           "description, mustBeDoneBy)" +                              
+                           "VALUES(@priority, @name, " +                               
+                           "@description, @mustBeDoneBy)";                             
+                sql.parameters["@priority"] = itemPriority.value;                      
+                sql.parameters["@name"] = itemName.text;                               
+                sql.parameters["@description"] = itemDescription.text;                 
+                sql.parameters["@mustBeDoneBy"] = itemMustBeDoneBy.selectedDate;              
+                sql.addEventListener(SQLEvent.RESULT, selectToDoItems);
+                sql.execute();
+            }
+
+            private function updateItem(event:MouseEvent):void {
+                var sql:SQLStatement = new SQLStatement();
+                sql.sqlConnection = _connection;
+                sql.text = "UPDATE todo SET priority = @priority, " +                     
+                           "name = @name, description = @description, " +                 
+                           "mustBeDoneBy = @mustBeDoneBy WHERE id = @id";                 
+                sql.parameters["@priority"] = itemPriority.value;                         
+                sql.parameters["@name"] = itemName.text;                                  
+                sql.parameters["@description"] = itemDescription.text;                    
+                sql.parameters["@mustBeDoneBy"] = itemMustBeDoneBy.selectedDate;              
+                sql.parameters["@id"] = _selectedItem.id;                                 
+                sql.addEventListener(SQLEvent.RESULT, selectToDoItems);
+                sql.execute();
+                currentState = "";
+                _selectedItem = null;
+            }
+            
+            private function selectToDoItems(event:SQLEvent = null):void {
+                var sql:SQLStatement = new SQLStatement();
+                sql.sqlConnection = _connection;
+                sql.text = "SELECT id, priority, name, description, mustBeDoneBy " +
+                           "FROM todo ORDER BY mustBeDoneBy, priority";
+                sql.itemClass = ToDoItem;                                               
+                sql.addEventListener(SQLEvent.RESULT, selectHandler);
+                sql.execute();                
+            }
+            
+            private function selectHandler(event:SQLEvent):void {                        
+            }
+            
+        ]]>
+    </mx:Script>

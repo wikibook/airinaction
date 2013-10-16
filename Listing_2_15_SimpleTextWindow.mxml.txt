@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Window xmlns:mx="http://www.adobe.com/2006/mxml" width="200" height="200"  type="utility" windowComplete="windowCompleteHandler();">
+    <mx:Script>
+        <![CDATA[
+            
+            private function windowCompleteHandler():void {
+                nativeWindow.x = 0;
+                nativeWindow.y = 0;
+            }
+            
+        ]]>
+    </mx:Script>
+    <mx:Label text="New Window Content" />
+</mx:Window>

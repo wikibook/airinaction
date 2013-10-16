@@ -1,0 +1,9 @@
+<html>
+    <body>
+            <button onclick="parentSandboxBridge.writeMemo(subject.value, message.value)">Save Memo</button>
+        <form>
+            Subject <input type="text" id="subject" /><br />
+            Message <textarea id="message" /><br />
+        </form>
+    </body>
+</html>

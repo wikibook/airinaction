@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="creationCompleteHandler();">
+    <mx:Script>
+    <![CDATA[
+        import flash.filesystem.File;
+        
+        private function creationCompleteHandler():void {
+            var file:File = File.desktopDirectory;
+            file.browseForOpenMultiple("Select files");
+            file.addEventListener(FileListEvent.SELECT_MULTIPLE, selectEventHandler);
+        }
+        
+        private function selectEventHandler(event:FileListEvent):void {
+            var file:File;
+            output.text = event.files.length + " files selected";
+            for(var i:Number = 0; i < event.files.length; i++) {
+                file = event.files[i] as File;
+                output.text += "\nFile: " + file.name;
+                output.text += "\nPath: " + file.nativePath;
+                output.text += "\n\n";
+            }
+        }
+        
+    ]]>
+    </mx:Script>
+    <mx:TextArea id="output" width="100%" height="100%" />
+</mx:WindowedApplication>

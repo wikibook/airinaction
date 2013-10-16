@@ -1,0 +1,61 @@
+﻿package com.manning.books.airinaction {
+	
+	// Import the classes necessary for this project. If you work 
+      // with Flash CS3 then these first few classes are already 
+      // familiar to you.
+	import flash.display.MovieClip;
+	import flash.events.MouseEvent;
+	import fl.controls.List;
+	import fl.data.DataProvider;
+
+	// We also need to import the File class, an AIR-specific class
+	// that you'll learn about in Chapter 3.
+	import flash.filesystem.File;
+	
+	// Since this class is a document class it must extend MovieClip.
+	public class QuickStartAIRApplication extends MovieClip {
+		
+		// Declare a property to use in order to reference
+		// the list component.
+		private var _list:List;
+		
+		// The constructor.
+		public function QuickStartAIRApplication() {
+
+			// Create the list component, and add it to the
+			// display list.
+			_list = new List();
+			addChild(_list);
+
+			// Listen for double-click events on the list.
+			_list.addEventListener(MouseEvent.DOUBLE_CLICK, clickHandler);
+
+			// Make the list the size of the entire application.
+			_list.width = 550;
+			_list.height = 400;
+
+			// The list will contain File objects. File objects
+			// have name properties that we'll use to display the
+			// labels on the list items.
+			_list.labelField = "name";
+
+			// Set the data provider of the list to the user's
+			// desktop directory listing.
+			_list.dataProvider = new DataProvider(File.desktopDirectory.getDirectoryListing());
+		}
+		
+		private function clickHandler(event:MouseEvent):void {
+			// Test if the selected item in the list is a
+			// directory. Only continue if it is.
+			if(_list.selectedItem.isDirectory) {
+				// Set the list's data provider to the 
+				// directory listing of the newly-selected 
+				// directory.
+				_list.dataProvider = new DataProvider(_list.selectedItem.getDirectoryListing());
+
+			}
+		}
+		
+	}
+	
+}

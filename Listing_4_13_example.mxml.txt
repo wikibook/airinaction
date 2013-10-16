@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
+    <mx:Script>
+        <![CDATA[
+            
+            private function startInitiatorDrag():void {
+                initiatorLabel.text = String(Math.random());
+                var clipboard:Clipboard = new Clipboard();
+                clipboard.setData(ClipboardFormats.TEXT_FORMAT, initiatorLabel.text);
+                NativeDragManager.doDrag(initiatorObject, clipboard);
+            }
+            
+            private function nativeDragEnterHandler(event:NativeDragEvent):void {
+                NativeDragManager.acceptDragDrop(event.currentTarget as Text);
+            }
+            
+            private function nativeDragDropHandler(event:NativeDragEvent):void {
+                var text:Text = event.currentTarget as Text;
+                var string:String = event.clipboard.getData(ClipboardFormats.TEXT_FORMAT) as String;                                               
+                text.text = string;                                                        
+            }
+            
+        ]]>
+    </mx:Script>
+    <mx:HBox>
+        <mx:Canvas id="initiatorObject" width="200" height="50" backgroundColor="#00FF00" 
+            mouseDown="startInitiatorDrag();">
+            <mx:Label id="initiatorLabel" />
+        </mx:Canvas>
+        <mx:VBox>
+            <mx:Canvas width="200" height="100" backgroundColor="0xFFFF00">
+                <mx:Text width="100%" height="100%" 
+                    nativeDragEnter="nativeDragEnterHandler(event);" 
+                    nativeDragDrop="nativeDragDropHandler(event);" />                      
+            </mx:Canvas>
+            <mx:Canvas width="200" height="100" backgroundColor="0xFFFF00">
+                <mx:Text width="100%" height="100%" 
+                    nativeDragEnter="nativeDragEnterHandler(event);" 
+                    nativeDragDrop="nativeDragDropHandler(event);" />                      
+            </mx:Canvas>
+        </mx:VBox>
+    </mx:HBox>
+</mx:WindowedApplication>

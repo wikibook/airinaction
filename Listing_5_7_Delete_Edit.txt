@@ -1,0 +1,15 @@
+private function deleteItem(event:Event):void {
+    var item:Object = event.currentTarget.data;
+    var sql:SQLStatement = new SQLStatement();
+    sql.sqlConnection = _connection;
+    sql.text = "DELETE FROM todo WHERE id = @id";
+    sql.parameters["@id"] = item.id;
+    sql.addEventListener(SQLEvent.RESULT, selectToDoItems);
+    sql.execute();        
+}
+
+private function editItem(event:Event):void {
+    var item:ToDoItem = event.currentTarget.data;
+    _selectedItem = item;
+    currentState = "Edit";
+}            

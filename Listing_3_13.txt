@@ -1,0 +1,22 @@
+package {
+    import flash.events.ProgressEvent;
+    import flash.net.URLRequest;
+    import flash.net.URLStream;
+    
+    public class FileDownloader {
+        
+        public function FileDownloader(url:String) {
+            var stream:URLStream = new URLStream();                            
+            stream.addEventListener(ProgressEvent.PROGRESS, progressHandler);                                                          
+            stream.load(new URLRequest(url));                                  
+        }
+        
+        public function progressHandler(event:ProgressEvent):void {            
+            var stream:URLStream = event.target as URLStream;                  
+            while(stream.bytesAvailable) {                                   
+                trace(stream.readByte());                                      
+            }
+        }
+        
+    }
+}

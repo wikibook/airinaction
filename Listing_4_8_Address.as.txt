@@ -1,0 +1,56 @@
+package com.manning.airinaction {
+    
+    [RemoteClass(alias="com.manning.airinaction.Address")]
+    public class Address {
+        
+        private var _address1:String;
+        private var _address2:String;
+        private var _city:String;
+        private var _province:String;
+        private var _postalCode:String;
+        
+        public function set address1(value:String):void {
+            _address1 = value;
+        }
+        
+        public function get address1():String {
+            return _address1;
+        }
+        
+        public function set address2(value:String):void {
+            _address2 = value;
+        }
+        
+        public function get address2():String {
+            return _address2;
+        }
+
+        public function set city(value:String):void {
+            _city = value;
+        }
+        
+        public function get city():String {
+            return _city;
+        }
+
+        public function set province(value:String):void {
+            _province = value;
+        }
+        
+        public function get province():String {
+            return _province;
+        }
+
+        public function set postalCode(value:String):void {
+            _postalCode = value;
+        }
+        
+        public function get postalCode():String {
+            return _postalCode;
+        }
+
+        public function Address() {
+        }
+        
+    }
+}

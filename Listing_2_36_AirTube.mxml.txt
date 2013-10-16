@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="800" height="600" creationComplete="creationCompleteHandler();">
+    <mx:Script>
+        <![CDATA[
+            import com.manning.airtube.services.AirTubeService;
+            import com.manning.airtube.data.ApplicationData;
+            
+            static private var _instance:AirTube;
+
+            private var _service:AirTubeService;
+            
+            static public function getInstance():AirTube {
+                return _instance;                                            
+            }
+            
+            private function creationCompleteHandler():void {                
+                _service = AirTubeService.getInstance();                     
+                _service.key = "YourAPIKey";                                  
+                _instance = this;                                             
+            }
+                                                
+        ]]>
+    </mx:Script>
+    <mx:VBox width="100%">
+        <mx:Label text="AirTube: Adobe AIR and YouTube" />
+        <mx:HBox>
+            <mx:Label text="tags:" />
+            <mx:TextInput id="tags" text="Adobe AIR" />
+            <mx:Button label="Search For Videos" />
+        </mx:HBox>
+            <mx:TileList id="videoList" 
+            dataProvider="{ApplicationData.getInstance().videos}"
+            width="100%" height="400" 
+            columnCount="2" horizontalScrollPolicy="off" />                      
+    </mx:VBox>
+</mx:WindowedApplication>

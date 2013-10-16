@@ -1,0 +1,23 @@
+<html>
+    <script>
+
+        var bridge = new Object();                                     
+        bridge.writeMemo = writeMemo;                                  
+
+        function loadHandler() {
+            window.document.getElementById("bridgeFrame").contentWindow.parentSandboxBridge = bridge;
+        }
+
+        function writeMemo(subject, message) {
+            var file = window.runtime.flash.filesystem.File.documentsDirectory.resolvePath("memo.txt");
+            var writer = new window.runtime.flash.filesystem.FileStream;
+            writer.open(file, "write");
+            writer.writeUTFBytes(subject + "\n" + message);
+            writer.close();
+        }
+
+    </script>
+    <body onload="loadHandler()">
+        <iframe id="bridgeFrame" src="http://www.example.com/texteditor.html" width="100%" height="100%"></iframe>
+    </body>
+</html>

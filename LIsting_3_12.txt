@@ -1,0 +1,59 @@
+package {
+    
+    import flash.display.MovieClip;
+    import flash.events.MouseEvent;
+    import flash.display.Stage;
+    import flash.filesystem.File;
+    import flash.events.FileListEvent;
+    import flash.events.Event;
+    import fl.controls.Button;
+    import fl.controls.TextArea;
+    
+    public class DesktopOrganizer extends MovieClip {
+        
+        public function DesktopOrganizer() {
+            _button.addEventListener(MouseEvent.CLICK, startOrganize);
+        }
+        
+        private function startOrganize(event:MouseEvent):void {
+            var organized:File = File.desktopDirectory.resolvePath("Files Organized By Type");
+            if(!organized.exists) {
+                organized.createDirectory();
+                print("created directory: " + organized.nativePath);
+            }
+            var desktop:File = File.desktopDirectory.resolvePath("To Organize");
+            desktop.addEventListener(FileListEvent.DIRECTORY_LISTING, directoryListingHandler);
+            desktop.getDirectoryListingAsync();
+        }
+        
+        private function directoryListingHandler(event:FileListEvent):void {
+            var files:Array = event.files;
+            var file:File;
+            var organized:File = File.desktopDirectory.resolvePath("Files Organized By Type");
+            var extension:File;
+            for(var i:Number = 0; i < files.length; i++) {
+                file = files[i] as File;
+                if(!file.isDirectory) {
+                    extension = organized.resolvePath(file.extension);
+                    if(!extension.exists) {
+                        extension.createDirectory();
+                        print("created directory: " + extension.nativePath);
+                    }
+                    file.addEventListener(Event.COMPLETE, completeHandler);  
+                    file.moveToAsync(extension.resolvePath(file.name));      
+                    print("moving file: " + file.name);
+                }
+            }
+        }
+        
+        private function completeHandler(event:Event):void {                            
+            print("moved file: " + event.target.name);
+        }
+        
+        private function print(message:String):void {
+            _textArea.text += message + "\n";
+        }
+        
+    }
+    
+}

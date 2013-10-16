@@ -1,0 +1,43 @@
+package com.manning.airtube.data {
+    
+    import com.adobe.webapis.youtube.Video;
+    
+    import flash.events.Event;
+    import flash.events.EventDispatcher;
+    
+    public class AirTubeVideo extends EventDispatcher {
+        
+        private var _video:Video;
+        private var _flvUrl:String;
+        private var _offline:Boolean;
+
+        public function get video():Video {
+            return _video;
+        }
+        
+        [Bindable(event="flvUrlChanged")]                        
+        public function get flvUrl():String {
+            return _flvUrl;
+        }
+        
+        public function set flvUrl(value:String):void {
+            _flvUrl = value;
+            dispatchEvent(new Event("flvUrlChanged"));
+        }
+        
+        [Bindable(event="offlineChanged")]
+        public function set offline(value:Boolean):void {
+            _offline = value;
+            dispatchEvent(new Event("offlineChanged"));
+        }
+        
+        public function get offline():Boolean {
+            return _offline;
+        }
+        
+        public function AirTubeVideo(value:Video) {
+            _video = value;
+        }
+        
+    }
+}

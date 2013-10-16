@@ -1,0 +1,27 @@
+package {
+    
+    import flash.display.MovieClip;
+    import flash.display.NativeMenu;
+    import flash.display.NativeMenuItem;
+    import flash.display.Sprite;
+    
+    public class Example extends MovieClip {
+        
+        public function Example() {
+            
+            var rectangle:Sprite = new Sprite();
+            rectangle.graphics.lineStyle(0, 0, 1);
+            rectangle.graphics.beginFill(0, 1);
+            rectangle.graphics.drawRect(0, 0, 100, 100);
+            rectangle.graphics.endFill();
+            addChild(rectangle);
+            
+            var menu:NativeMenu = new NativeMenu();
+            var item:NativeMenuItem = new NativeMenuItem("copy");
+            menu.addItem(item);
+
+            rectangle.contextMenu = menu;
+        }
+    }
+    
+}

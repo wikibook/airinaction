@@ -1,0 +1,41 @@
+package {
+    
+    import flash.display.NativeWindowType;
+    import flash.display.NativeWindowInitOptions;
+    import flash.display.NativeWindow;
+    import flash.display.MovieClip;
+    import flash.events.MouseEvent;
+    import flash.events.Event;
+    
+    public class WindowExample extends MovieClip {
+        
+        private var _window:NativeWindow;
+        
+        public function WindowExample() {
+
+            var options:NativeWindowInitOptions = new NativeWindowInitOptions();
+            options.type = NativeWindowType.UTILITY;
+
+            _window = new NativeWindow(options);
+            _window.width = 200;
+            _window.height = 200;
+            
+            _window.activate();
+            
+            stage.addEventListener(MouseEvent.CLICK, openWindow);
+
+            _window.addEventListener(Event.CLOSING, closingHandler);
+        }
+        
+        private function closingHandler(event:Event):void {
+            _window.visible = false;
+            event.preventDefault();
+        }
+        
+        private function openWindow(event:MouseEvent):void {
+            _window.activate();
+        }
+        
+    }
+        
+}

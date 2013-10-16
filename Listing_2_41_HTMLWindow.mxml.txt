@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Window xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" 
+    width="800" height="800" closing="closingHandler(event);">
+    <mx:Script>
+        <![CDATA[
+            
+            private function closingHandler(event:Event):void {
+                event.preventDefault();
+                visible = false;
+            }
+            
+        ]]>
+    </mx:Script>
+</mx:Window>

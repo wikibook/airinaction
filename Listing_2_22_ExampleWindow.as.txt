@@ -1,0 +1,57 @@
+package {
+
+    import flash.display.NativeWindow;
+    import flash.display.NativeWindowSystemChrome;
+    import flash.display.NativeWindowType;
+    import flash.display.NativeWindowInitOptions;
+    import flash.display.Sprite;
+    import flash.display.Stage;
+    import flash.display.StageAlign;
+    import flash.display.StageScaleMode;
+    import flash.events.MouseEvent;
+    import flash.events.Event;
+
+    public class ExampleWindow extends NativeWindow {
+        
+        private var _background:Sprite;
+        
+        public function ExampleWindow() {
+            var options:NativeWindowInitOptions = new NativeWindowInitOptions();
+
+            options.systemChrome = NativeWindowSystemChrome.NONE;
+            options.type = NativeWindowType.LIGHTWEIGHT;
+            options.transparent = true;
+
+            super(options);
+            _background = new Sprite();
+            drawBackground(200, 200);
+            stage.addChild(_background);
+            
+            width = 200;
+            height = 200;
+            
+            stage.align = StageAlign.TOP_LEFT;
+            stage.scaleMode = StageScaleMode.NO_SCALE;
+            
+            _background.addEventListener(MouseEvent.MOUSE_DOWN, startMoveWindow);
+            
+        }
+        
+        private function drawBackground(newWidth:Number, newHeight:Number):void {
+            _background.graphics.clear();
+            _background.graphics.lineStyle(0, 0, 0);
+            _background.graphics.beginFill(0x0000FF, .5);
+            _background.graphics.drawRoundRectComplex(0, 0, newWidth, newHeight, 20, 20, 20, 1);
+            _background.graphics.beginFill(0xFFFFFF, .9);
+            _background.graphics.drawRoundRectComplex(5, 5, newWidth - 10, newHeight - 10, 20, 20, 20, 1);
+            _background.graphics.endFill();
+
+        }
+        
+        private function startMoveWindow(event:MouseEvent):void {
+            startMove();
+        }
+        
+    }
+    
+}

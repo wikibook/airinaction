@@ -1,0 +1,20 @@
+package com.manning.airinaction.html {
+    
+    import flash.display.MovieClip;
+    import flash.html.HTMLLoader;
+    import flash.net.URLRequest;
+    
+    public class Main extends MovieClip {
+        
+        private var _htmlLoader:HTMLLoader;
+        
+        public function Main() {
+            _htmlLoader = new HTMLLoader();
+            _htmlLoader.width = stage.stageWidth;
+            _htmlLoader.height = stage.stageHeight;
+            addChild(_htmlLoader);
+            _htmlLoader.load(new URLRequest("http://www.manning.com/lott"));
+        }
+    }
+    
+}

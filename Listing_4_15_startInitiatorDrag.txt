@@ -1,0 +1,9 @@
+private function startInitiatorDrag():void {
+                initiator.text = String(Math.random());
+                var clipboard:Clipboard = new Clipboard();
+                clipboard.setData(ClipboardFormats.TEXT_FORMAT, initiator.text);
+                var initiatorImage:BitmapData = new BitmapData(initiator.width, initiator.height);
+                initiatorImage.draw(initiator.parent);
+                var point:Point = new Point(-initiator.mouseX, -initiator.mouseY);
+                NativeDragManager.doDrag(initiatorObject, clipboard, initiatorImage, point);
+            }

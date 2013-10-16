@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script>
+        <![CDATA[
+
+            private function takeSnapshot():void {
+                var bitmapData:BitmapData = new BitmapData(stage.width,                  
+                                                           stage.height);                  
+                bitmapData.draw(stage);                                                    
+                var clipboard:Clipboard = Clipboard.generalClipboard;                      
+                clipboard.clear();
+                clipboard.setData(ClipboardFormats.BITMAP_FORMAT, bitmapData);             
+            }
+            
+        ]]>
+    </mx:Script>
+    <mx:Button label="Snapshot" click="takeSnapshot();" />                                 
+</mx:WindowedApplication>

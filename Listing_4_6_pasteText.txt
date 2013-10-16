@@ -1,0 +1,8 @@
+            private function pasteText(event:Event):void {
+                if(_focused is TextArea && _clipboard.hasFormat(ClipboardFormats.TEXT_FORMAT)) {
+                    var text:String = _clipboard.getData(ClipboardFormats.TEXT_FORMAT) as String;                
+                    var currentText1:String = _focused.text.substr(0, _focused.selectionBeginIndex);
+                    var currentText2:String = _focused.text.substr(_focused.selectionEndIndex);
+                    _focused.text = currentText1 + text + currentText2;
+                }
+            }

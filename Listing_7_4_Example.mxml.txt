@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="350" creationComplete="creationCompleteHandler();">
+    <mx:Script>
+        <![CDATA[
+            
+            private function creationCompleteHandler():void {
+                html.htmlLoader.loadString("<html><body><h1>HTML in AIR</h1></body></html>");
+            }
+            
+        ]]>
+    </mx:Script>
+    <mx:HTML id="html" width="100%" height="100%" />
+</mx:WindowedApplication>

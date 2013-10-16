@@ -1,0 +1,23 @@
+package com.manning.airinaction.html {
+    
+    import flash.display.MovieClip;
+    import flash.html.HTMLLoader;
+    import flash.net.URLRequest;
+    import com.manning.airinaction.html.CustomHTMLHost;
+    
+    public class Main extends MovieClip {
+        
+        private var _htmlLoader:HTMLLoader;
+        
+        public function Main() {
+            _htmlLoader = new HTMLLoader();
+            _htmlLoader.width = stage.stageWidth;
+            _htmlLoader.height = stage.stageHeight;
+            _htmlLoader.htmlHost = new CustomHTMLHost();
+            _htmlLoader.load(new URLRequest("example.html"));
+            addChild(_htmlLoader);
+        }
+
+    }
+    
+}

@@ -1,0 +1,116 @@
+package {
+    
+    import flash.display.MovieClip;
+    import flash.display.NativeWindow;
+    import flash.display.NativeWindowInitOptions;
+    import flash.display.NativeWindowType;
+    import flash.desktop.NativeApplication;
+    import flash.display.NativeMenu;
+    import flash.display.NativeMenuItem;
+    import flash.events.Event;
+    
+    public class Example extends MovieClip {
+        
+        private var _windowsMenu:NativeMenu;
+        
+        public function Example() {
+            
+            var mainMenu:NativeMenu = new NativeMenu();                      
+            
+            var applicationMenu:NativeMenu = new NativeMenu();               
+            var save:NativeMenuItem = new NativeMenuItem("save");            
+            var close:NativeMenuItem = new NativeMenuItem("close");          
+
+            close.addEventListener(Event.SELECT, selectHandler);             
+            
+            applicationMenu.addItem(save);                                   
+            applicationMenu.addItem(close);                                  
+
+            _windowsMenu = new NativeMenu();                                 
+            
+            var newWindow:NativeMenuItem = new NativeMenuItem("new window"); 
+                newWindow.addEventListener(Event.SELECT, selectHandler);        
+            
+                var line:NativeMenuItem = new NativeMenuItem("", true);          
+            
+            _windowsMenu.addItem(newWindow);
+            _windowsMenu.addItem(line);
+        
+            mainMenu.addSubmenu(applicationMenu, "Application");             
+            mainMenu.addSubmenu(_windowsMenu, "Windows");                    
+            
+            var mainWindow:NativeWindow = NativeApplication.nativeApplication.openedWindows[0] as NativeWindow; 
+
+            if(NativeApplication.supportsMenu) {            
+                NativeApplication.nativeApplication.menu = mainMenu;          
+            }                                                                 
+            else if(NativeWindow.supportsMenu) {                              
+                 mainWindow.menu = mainMenu;                                  
+            }                                                                 
+
+            mainWindow.addEventListener(Event.CLOSE, closeAll);               
+            
+        }
+                
+        private function closeAll(event:Event = null):void {                  
+            var windows:Array = NativeApplication.nativeApplication.openedWindows;
+            for(var i:Number = 0; i < windows.length; i++) {
+                windows[i].removeEventListener(Event.CLOSE, closeHandler);    
+                windows[i].close();
+            }
+        }
+                
+        private function selectHandler(event:Event):void {
+            if(event.target.label == "close") {                                
+                closeAll();
+            }
+            else if(event.target.label == "new window") {                      
+
+                var windowTitle:String = "Window " + NativeApplication.nativeApplication.openedWindows.length;                  
+
+                var options:NativeWindowInitOptions = new NativeWindowInitOptions();                                             
+                options.type = NativeWindowType.UTILITY;                       
+                var window:NativeWindow = new NativeWindow(options);           
+                window.width = 200;                                            
+                window.height = 200;                                           
+                window.title = windowTitle;                                    
+                
+                window.addEventListener(Event.ACTIVATE, activateHandler);      
+                window.addEventListener(Event.CLOSE, closeHandler);            
+
+                var menuItem:NativeMenuItem = new NativeMenuItem();            
+                menuItem.label = windowTitle;
+                menuItem.data = window;
+                menuItem.addEventListener(Event.SELECT, selectWindowHandler);
+
+                _windowsMenu.addItem(menuItem);                                 
+
+                window.activate();
+            }
+        }
+        
+        private function selectWindowHandler(event:Event):void {                 
+            event.target.data.activate();
+        }
+        
+        private function activateHandler(event:Event):void {                     
+            var item:NativeMenuItem;
+            for(var i:Number = _windowsMenu.numItems - 1; i >= 0; i--) {
+                item = _windowsMenu.getItemAt(i);
+                item.checked = (item.data == event.target);
+            }            
+        }
+
+        private function closeHandler(event:Event):void {                        
+            var item:NativeMenuItem;
+            for(var i:Number = 0; i < _windowsMenu.numItems; i++) {
+                item = _windowsMenu.getItemAt(i);
+                if(item.data == event.target) {
+                    _windowsMenu.removeItem(item);
+                    break;
+                }
+            }
+        }
+    }
+    
+}

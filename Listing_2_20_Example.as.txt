@@ -1,0 +1,36 @@
+package {
+    
+    import flash.display.MovieClip;
+    import flash.display.NativeWindow;
+    import flash.display.NativeWindowInitOptions;
+    import flash.display.NativeWindowType;
+    import flash.desktop.NativeApplication;
+    import flash.events.Event;
+    
+    public class Example extends MovieClip {
+        
+        public function Example() {
+            
+            var options:NativeWindowInitOptions = new NativeWindowInitOptions();
+            options.type = NativeWindowType.UTILITY;
+            
+            var window:NativeWindow = new NativeWindow(options);
+            window.width = 200;
+            window.height = 200;
+
+            window.activate();
+
+            this.stage.nativeWindow.addEventListener(Event.CLOSING, closingHandler);                                      
+        }
+                
+        private function closingHandler(event:Event):void {
+            var windows:Array = NativeApplication.nativeApplication.openedWindows;
+            for(var i:Number = 0; i < windows.length; i++) {                      
+                windows[i].close();                                               
+            }                                                                     
+        }
+        
+                
+    }
+    
+}

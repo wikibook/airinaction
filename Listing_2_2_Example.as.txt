@@ -1,0 +1,26 @@
+package {
+    
+    import flash.display.MovieClip;
+    import flash.display.NativeWindow;
+    import flash.display.NativeWindowInitOptions;
+    import flash.display.NativeWindowType;
+    
+    public class Example extends MovieClip {
+        
+        public function Example() {
+            
+            var options:NativeWindowInitOptions = new NativeWindowInitOptions();
+            options.type = NativeWindowType.UTILITY;
+            options.systemChrome = NativeWindowType.UTILITY;
+            
+            var window:NativeWindow = new NativeWindow(options);
+            window.width = 200;
+            window.height = 200;
+
+            window.activate();
+            
+        }
+        
+    }
+    
+}

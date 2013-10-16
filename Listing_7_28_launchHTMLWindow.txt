@@ -1,0 +1,9 @@
+public function launchHTMLWindow(url:String):void {
+    _htmlWindow.url = url;
+    if(_htmlWindow.nativeWindow == null) {
+           _htmlWindow.open();
+       }
+       else {
+            _htmlWindow.activate();
+       }
+}

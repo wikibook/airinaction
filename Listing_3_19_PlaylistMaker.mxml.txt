@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="creationCompleteHandler();" width="800">
+	<mx:Script>
+	<![CDATA[
+		import com.manning.playlistmaker.data.Playlist;
+		import mx.effects.Fade;
+		import com.manning.playlistmaker.services.PlaylistService;
+		import flash.filesystem.File;
+		import com.manning.playlistmaker.data.ApplicationData;
+		
+		[Bindable]
+		private var _applicationData:ApplicationData;
+		private var _service:PlaylistService;
+		
+		private function creationCompleteHandler():void {
+			_applicationData = ApplicationData.getInstance();
+			_service = new PlaylistService();
+			_service.getMp3s(File.documentsDirectory);
+			_service.loadSavedPlaylists();
+		}
+		
+		private function addToPlaylist():void {
+			_applicationData.playlist.addTrack(mp3list.selectedItem as File);
+		}
+		
+		private function removeFromPlaylist():void {
+			_applicationData.playlist.removeTrack(mp3list.selectedItem as File);			
+		}
+		
+		private function newPlaylist():void {
+			_applicationData.playlist = new Playlist();
+		}
+		
+		private function loadPlaylist():void {
+			_applicationData.playlist = savedPlaylists.selectedItem as Playlist; 
+			for (var i:int=0; i<_applicationData.playlist.list.length;i++) { 
+				_applicationData.playlist.list[i] = new File(_applicationData.playlist.list[i].nativePath); 
+		} 
+
+		
+		private function savePlaylist():void {
+			var playlist:Playlist = _applicationData.playlist;
+			playlist.name = playlistName.text;
+			_service.savePlaylists();
+		}
+		
+		
+	]]>
+	</mx:Script>
+	<mx:HBox width="100%">
+		<mx:VBox width="33%">
+			<mx:Label text="All MP3s" />
+			<mx:List id="mp3list" dataProvider="{_applicationData.mp3s.list}" labelField="name" width="100%" height="100%" />			
+		</mx:VBox>
+		<mx:VBox>
+			<mx:Spacer height="50" />
+			<mx:Button label="&gt;&gt;" click="addToPlaylist();" enabled="{mp3list.selectedItem != null}" />
+			<mx:Button label="&lt;&lt;" click="removeFromPlaylist();" enabled="{playlist.selectedItem != null}" />
+		</mx:VBox>
+		<mx:VBox width="33%">
+			<mx:Label text="Playlist" />
+			<mx:List id="playlist" dataProvider="{_applicationData.playlist.list}" width="100%" height="100%" />
+			<mx:TextInput id="playlistName" text="{_applicationData.playlist.name}" />
+			<mx:Button label="Save" click="savePlaylist();" />
+			<mx:Button label="New" click="newPlaylist();" />
+		</mx:VBox>
+		<mx:VBox width="33%">
+			<mx:Label text="Saved Playlists" />
+			<mx:List id="savedPlaylists" dataProvider="{_applicationData.savedPlaylists}" labelField="name" width="100%" height="100%" />
+			<mx:Button label="Load" click="loadPlaylist();" />
+		</mx:VBox>
+		
+	</mx:HBox>
+</mx:WindowedApplication>

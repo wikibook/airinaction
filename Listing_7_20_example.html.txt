@@ -1,0 +1,8 @@
+<html>
+    <body>
+        <button onclick="window.document.title='New Title'">Title</button>
+        <button onclick="window.open('http://www.manning.com/lott', null, 'screenX=0, screenY=10, width=500, height=400')">Window</button>
+        <button onclick="window.close()">Close</button>
+        <button onclick="window.moveTo(0, 0)" />Reset Location</button>
+    </body>
+</html>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Window xmlns:mx="http://www.adobe.com/2006/mxml" 
+    width="400" height="400"                                                     
+    type="utility"                                                               
+    closing="closingHandler(event);"                                             
+    creationComplete="creationCompleteHandler();">                               
+    
+    <mx:Script>
+        <![CDATA[
+            import com.manning.airtube.services.AirTubeService;
+            import com.manning.airtube.data.ApplicationData;
+            
+            [Bindable]
+            private var _applicationData:ApplicationData;
+            
+            private function creationCompleteHandler():void {
+                _applicationData = ApplicationData.getInstance();
+            }
+            
+            private function closingHandler(event:Event):void {          
+                event.preventDefault();                                 
+                visible = false;                       
+		videoDisplay.stop(); //추가 
+                videoDisplay.source=null;  //추가                    
+            }
+            
+            private function togglePlayback():void {
+                if(videoDisplay.playing) {
+                    videoDisplay.pause();
+                    playPauseButton.label = "Play";
+                }
+                else {
+                    videoDisplay.play();
+                    playPauseButton.label = "Pause";
+                }
+            }
+            
+        ]]>
+    </mx:Script>
+    <mx:VBox>
+        <mx:Label text="{_applicationData.currentVideo.video.title}" />        
+        <mx:VideoDisplay id="videoDisplay" 
+               source="{_applicationData.currentVideo.flvUrl}"                    
+               width="400" height="300" />
+        <mx:HBox>
+            <mx:Button id="playPauseButton" label="Pause" 
+                       click="togglePlayback();" />
+        </mx:HBox>
+    </mx:VBox>
+</mx:Window>

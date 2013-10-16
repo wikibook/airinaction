@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" 
+    creationComplete="creationCompleteHandler();">
+    <mx:Script>
+        <![CDATA[
+            import air.net.URLMonitor;
+
+            private var _monitor:URLMonitor;
+
+            private function creationCompleteHandler():void {
+                _monitor = new URLMonitor(new URLRequest("http://www.manning.com"));
+                _monitor.addEventListener(StatusEvent.STATUS, statusHandler);
+                _monitor.start();
+            }
+            
+            private function statusHandler(event:StatusEvent):void {
+                textArea.text += "www.manning.com available? " + _monitor.available + "\n";
+            }
+            
+        ]]>
+    </mx:Script>
+    <mx:TextArea id="textArea" width="100%" height="100%" />
+</mx:WindowedApplication>

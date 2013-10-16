@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" creationComplete="creationCompleteHandler()">
+    <mx:Script>
+        <![CDATA[
+            
+            private var _latestVersion:String;
+            private var _airFileUrl:String;
+            
+            private function creationCompleteHandler():void {
+                var loader:URLLoader = new URLLoader();
+                loader.addEventListener(Event.COMPLETE, completeHandler);
+                loader.load(new URLRequest("http://www.rightactionscript.com/latestversion.txt"));
+            }
+            
+            private function completeHandler(event:Event):void {
+                var loader:URLLoader = event.target as URLLoader;
+                _latestVersion = loader.data.split(",")[0];
+                var descriptor:XML = NativeApplication.nativeApplication.applicationDescriptor;
+                var air:Namespace = descriptor.namespaceDeclarations()[0];
+                var currentVersion:String = descriptor.air::version;
+                if(_latestVersion != currentVersion) {
+                    _airFileUrl = loader.data.split(",")[1];
+                    textArea.text = "You are running version " + currentVersion + ". However, version " + _latestVersion + " is available. Click the button to update.";
+                    updateButton.enabled = true;
+                }
+                else {
+                    textArea.text = "You appear to be running the latest version";
+                }
+            }
+            
+            private function updateApplication():void {
+                var stream:URLStream = new URLStream();
+                stream.addEventListener(ProgressEvent.PROGRESS, progressHandler);
+                stream.addEventListener(Event.COMPLETE, downloadCompleteHandler);
+                stream.load(new URLRequest(_airFileUrl));
+                textArea.text = "Downloading update";
+            }
+            
+            private function progressHandler(event:ProgressEvent):void {
+                textArea.text = "Downloading update " + event.bytesLoaded + " of " + event.bytesTotal + " bytes";
+            }
+
+            private function downloadCompleteHandler(event:Event):void {
+                textArea.text = "Download complete";
+                var urlStream:URLStream = event.target as URLStream;
+                var file:File = File.applicationStorageDirectory.resolvePath("newVersion.air");
+                var fileStream:FileStream = new FileStream();
+                fileStream.open(file, FileMode.WRITE);
+                var bytes:ByteArray = new ByteArray();
+                urlStream.readBytes(bytes);
+                fileStream.writeBytes(bytes);
+                fileStream.close();
+                var updater:Updater = new Updater();
+                updater.update(file, _latestVersion);
+            }
+
+            
+        ]]>
+    </mx:Script>
+    <mx:VBox width="100%" height="100%">
+        <mx:TextArea id="textArea" width="100%" height="80%" />
+        <mx:Button id="updateButton" label="Update" enabled="false" click="updateApplication();" />        
+    </mx:VBox>
+</mx:WindowedApplication>

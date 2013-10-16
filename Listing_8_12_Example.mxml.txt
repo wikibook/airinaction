@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" creationComplete="creationCompleteHandler()">
+    <mx:Script>
+        <![CDATA[
+
+            private function creationCompleteHandler():void {
+                textArea.text = "application ID: " + NativeApplication.nativeApplication.applicationID;
+                textArea.text += "\npublisher ID: " + NativeApplication.nativeApplication.publisherID;
+                NativeApplication.nativeApplication.addEventListener(BrowserInvokeEvent.BROWSER_INVOKE, browserInvokeHandler);
+            }
+            
+            private function browserInvokeHandler(event:BrowserInvokeEvent):void {
+                textArea.text += "\n* arguments: " + event.arguments.length;
+                for(var i:Number = 0; i < event.arguments.length; i++) {
+                    textArea.text += "\n\t" + event.arguments[i];
+                }
+            }
+            
+        ]]>
+    </mx:Script>
+    <mx:TextArea width="100%" height="100%" id="textArea" />
+</mx:WindowedApplication>

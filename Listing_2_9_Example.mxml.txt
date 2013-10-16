@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" creationComplete="creationCompleteHandler();">
+    <mx:Script>
+        <![CDATA[
+            import mx.core.Window;
+            
+            private function creationCompleteHandler():void {
+                var window:Window = new Window();
+
+                window.width = 200;
+                window.height = 200;
+
+                window.type = NativeWindowType.UTILITY;
+                
+                window.open();
+            }
+                        
+        ]]>
+    </mx:Script>
+</mx:WindowedApplication>

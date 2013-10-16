@@ -1,0 +1,84 @@
+package com.manning.airtube.data {
+    
+    import flash.events.Event;
+    import flash.events.EventDispatcher;
+
+    public class ApplicationData extends EventDispatcher {
+        
+        static private var _instance:ApplicationData;
+        
+        private var _videos:Array;
+        private var _currentVideo:AirTubeVideo;
+        private var _downloadProgress:Number;
+        private var _online:Boolean;
+        private var _networkAvailable:Boolean;
+
+        [Bindable(event="videosChanged")]
+        public function set videos(value:Array):void {
+            _videos = value;
+            dispatchEvent(new Event("videosChanged"));
+        }
+        
+        public function get videos():Array {
+            return _videos;
+        }
+                
+        [Bindable(event="currentVideoChanged")]
+        public function set currentVideo(value:AirTubeVideo):void {
+            _currentVideo = value;
+            dispatchEvent(new Event("currentVideoChanged"));
+        }
+        
+        public function get currentVideo():AirTubeVideo {
+            return _currentVideo;
+        }
+        
+        [Bindable(event="downloadProgressChanged")]
+        public function set downloadProgress(value:Number):void {
+            _downloadProgress = value;
+            dispatchEvent(new Event("downloadProgressChanged"));
+        }
+        
+        public function get downloadProgress():Number {
+            return _downloadProgress;
+        }
+
+        [Bindable(event="onlineChanged")]
+        public function set online(value:Boolean):void {
+            _online = value;
+            dispatchEvent(new Event("onlineChanged"));
+        }
+        
+        public function get online():Boolean {
+            return _online;
+        }
+        
+        [Bindable(event="networkAvailableChanged")]        
+        public function set networkAvailable(value:Boolean):void {
+            if(value != _networkAvailable) {
+                _networkAvailable = value;
+                if(!_networkAvailable) {
+                    online = false;
+                    videos = null;
+                }
+                dispatchEvent(new Event("networkAvailableChanged"));
+            }
+        }
+
+        public function get networkAvailable():Boolean {
+            return _networkAvailable;
+        }
+        
+        public function ApplicationData() {
+            
+        }
+        
+        static public function getInstance():ApplicationData {
+            if(_instance == null) {
+                _instance = new ApplicationData();
+            }
+            return _instance;
+        }
+        
+    }
+}

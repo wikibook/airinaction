@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" 
+    creationComplete="creationCompleteHandler();">
+     <mx:Script>
+        <![CDATA[
+            
+            private var _connection:SQLConnection;                                   
+            
+            private function creationCompleteHandler():void {
+                var file:File = File.applicationStorageDirectory.resolvePath("database.db");
+                _connection = new SQLConnection();
+                _connection.addEventListener(SQLEvent.OPEN, openHandler);            
+                _connection.openAsync(file, SQLMode.CREATE);                         
+            }
+            
+            private function openHandler(event:SQLEvent):void {
+                var sql:SQLStatement = new SQLStatement();
+                sql.sqlConnection = _connection;
+                sql.text = "CREATE TABLE IF NOT EXISTS todo(" +                           
+                           "id INTEGER PRIMARY KEY AUTOINCREMENT, " +                     
+                           "priority INTEGER, " +                                         
+                           "name TEXT, " +                                                
+                           "description TEXT, " +                                         
+                           "mustBeDoneBy DATE)";                                          
+                sql.execute();
+            }
+                        
+        ]]>
+    </mx:Script>
+</mx:WindowedApplication>

@@ -1,0 +1,58 @@
+package {
+    
+    import flash.display.MovieClip;
+    import flash.display.NativeWindow;
+    import flash.display.NativeWindowInitOptions;
+    import flash.display.NativeWindowType;
+    import flash.events.NativeWindowBoundsEvent;
+    import flash.display.Screen;
+    
+    public class Example extends MovieClip {
+        
+        public function Example() {
+            
+            var options:NativeWindowInitOptions = new NativeWindowInitOptions();
+            options.type = NativeWindowType.UTILITY;
+            options.systemChrome = NativeWindowType.UTILITY;
+            
+            var window:NativeWindow = new NativeWindow(options);
+            window.width = 200;
+            window.height = 200;
+
+            window.activate();
+
+            window.addEventListener(NativeWindowBoundsEvent.MOVE, moveHandler);   
+            
+        }
+        
+        private function moveHandler(event:NativeWindowBoundsEvent):void {
+
+            var window:NativeWindow = event.target as NativeWindow;
+            
+            var screens:Array = Screen.getScreensForRectangle(window.bounds);    
+            var screen:Screen;
+        
+            if(screens.length == 1) {                                             
+                screen = screens[0];                                              
+            }                                                                     
+            else if(screens.length == 2) {                                        
+                screen = screens[1];                                              
+            }                                                                     
+        
+            if(window.x < screen.bounds.x + 100) {                                
+                window.x = screen.bounds.x;                                       
+            }                                                                     
+            else if(window.x > screen.bounds.x + screen.bounds.width - window.width - 100) {
+                window.x = screen.bounds.x + screen.bounds.width - window.width;
+            }
+            if(window.y < screen.bounds.y + 100) {
+                window.y = screen.bounds.y;
+            }
+            else if(window.y > screen.bounds.y + screen.bounds.height - window.height - 100) {
+                window.y = screen.bounds.y + screen.bounds.height - window.height;
+            }
+        }
+        
+    }
+    
+}

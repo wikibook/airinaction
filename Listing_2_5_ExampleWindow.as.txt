@@ -1,0 +1,22 @@
+package {
+
+    import flash.display.NativeWindow;
+    import flash.display.NativeWindowType;
+    import flash.display.NativeWindowInitOptions;
+
+    public class ExampleWindow extends NativeWindow {
+        
+        public function ExampleWindow() {
+            var options:NativeWindowInitOptions = new NativeWindowInitOptions();
+            options.type = NativeWindowType.UTILITY;
+
+            super(options);
+
+            width = 200;
+            height = 200;
+
+        }
+                
+    }
+    
+}

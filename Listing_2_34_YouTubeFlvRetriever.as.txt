@@ -1,0 +1,34 @@
+package com.manning.airtube.utilities {
+    import com.manning.airtube.data.AirTubeVideo;
+    import flash.display.Loader;
+    import flash.events.Event;
+    import flash.net.URLRequest;
+    import flash.net.URLVariables;
+    
+    
+    public class YouTubeFlvUrlRetriever {
+        
+        private var _currentVideo:AirTubeVideo;
+        private var _loader:Loader;
+        
+        public function YouTubeFlvUrlRetriever() {
+            _loader = new Loader();                                           
+        }
+        
+        public function getUrl(video:AirTubeVideo):void {
+            _currentVideo = video;                                              
+            var request:URLRequest = new URLRequest(video.video.playerURL);     
+            _loader.contentLoaderInfo.addEventListener(Event.INIT, videoInitializeHandler);                                                    
+            _loader.load(request);
+        }
+        
+        private function videoInitializeHandler(event:Event):void {
+            var variables:URLVariables = new URLVariables();
+            variables.decode(_loader.contentLoaderInfo.url.split("?")[1]);       
+            var flvUrl:String = "http://www.youtube.com/get_video.php?"+"video_id=" + variables.video_id + "&t=" + variables.t;          
+            _currentVideo.flvUrl = flvUrl;                                       
+            _loader.unload();                                                    
+        }
+        
+    }
+}

@@ -1,0 +1,24 @@
+package com.manning.airtube.services {
+    
+    import com.adobe.webapis.youtube.YouTubeService;
+    import com.adobe.webapis.youtube.events.YouTubeServiceEvent;
+    import com.manning.airtube.data.AirTubeVideo;
+    import com.manning.airtube.data.ApplicationData;
+    
+    import flash.events.Event;
+
+    public class AirTubeService {
+        
+        static private var _instance:AirTubeService;
+        
+        public function AirTubeService() {
+        }
+        
+        static public function getInstance():AirTubeService {
+            if(_instance == null) {
+                _instance = new AirTubeService();
+            }
+            return _instance;
+        }
+    }
+}
